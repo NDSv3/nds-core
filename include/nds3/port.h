@@ -52,7 +52,11 @@ public:
      *                 naming rules are used.
      */
     Port(const std::string& name, const nodeType_t nodeType = nodeType_t::generic);
-
+    /**
+     * @brief Reporter registration function to the control system.
+     * @param reporter
+     */
+    virtual void registerReporter(reporter_t reporter);
 };
 
 }

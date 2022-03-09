@@ -59,8 +59,8 @@ public:
      *
      * @param factory            the control system to which the device must be bound
      * @param driverName         the name of the device driver
-     * @param allocateFunction   the allocation function.
-     * @param deallocateFunction the deallocation function
+     * @param deviceName         the name of the device
+     * @param parameters
      */
     std::pair<void*, deallocateDriver_t> createDevice(FactoryBaseImpl& factory, const std::string& driverName, const std::string& deviceName, const namedParameters_t& parameters);
 

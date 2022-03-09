@@ -13,6 +13,7 @@
 #include <thread>
 #include "nds3/definitions.h"
 #include "nds3/impl/nodeImpl.h"
+#include "nds3/stateMachine.h"
 
 namespace nds
 {
@@ -26,6 +27,7 @@ template <typename T> class PVDelegateInImpl;
  */
 class StateMachineImpl: public NodeImpl
 {
+
 public:
 
     /**
@@ -64,6 +66,8 @@ public:
      *                                  a confirmation that the state switch is allowed.
      *                                 The function is called only after other internal checks clear
      *                                  the state switch
+     *@param autoState  Optional parameter with  the  value for automatic state transitions following its parent
+     *                                  By default set to off
      */
     StateMachineImpl(bool bAsync,
                      stateChange_t switchOnFunction,
@@ -71,7 +75,14 @@ public:
                      stateChange_t startFunction,
                      stateChange_t stopFunction,
                      stateChange_t recoverFunction,
-                     allowChange_t allowStateChangeFunction);
+                     allowChange_t allowStateChangeFunction,
+                     autoEnable_t autoState=autoEnable_t::off);
+
+   /**
+     * @brief Simplified constructor of the state machine implementation class.
+     * @param handlerSTM Structure with the arguments required by the state machine.
+     */
+    StateMachineImpl(const StateMachineArgs_t& handlerSTM);
 
     ~StateMachineImpl();
 
@@ -95,7 +106,7 @@ public:
     void setState(const state_t newState);
 
     /**
-     * @brief Return the local state. The local state does not reflect the state of the children.
+     * @brief Return the local state of the State Machine.
      *
      * @return the current local state
      */
@@ -109,6 +120,40 @@ public:
      * @param pState     pointer to a variable that will be filled with the current global state
      */
     virtual void getGlobalState(timespec* pTimestamp, state_t* pState) const;
+
+    /**
+     * @brief Return the lowest global state of all its children.
+     *
+     * @param pTimestamp pointer to a variable that will be filled with the timestamp
+     * @param pState     pointer to a variable that will be filled with the current global state
+     */
+    void getLowestGlobalState(timespec* pTimestamp, state_t* pState) const;
+
+    /**
+     * @brief Return the highest global state of all its children.
+     *
+     * @param pTimestamp pointer to a variable that will be filled with the timestamp
+     * @param pState     pointer to a variable that will be filled with the current global state
+     */
+    void getHighestGlobalState(timespec* pTimestamp, state_t* pState) const;
+
+    /**
+     * @brief Return the lowest state of all its children. This state only takes into consideration the states
+     *        of the children of the node to which the state machine is attached.
+     *
+     * @param pTimestamp pointer to a variable that will be filled with the timestamp
+     * @param pState     pointer to a variable that will be filled with the current global state
+     */
+    void getLowestChildState(timespec* pTimestamp, state_t* pState) const;
+
+    /**
+     * @brief Return the highest state of all its children. This state only takes into consideration the states
+     *        of the children of the node to which the state machine is attached.
+     *
+     * @param pTimestamp pointer to a variable that will be filled with the timestamp
+     * @param pState     pointer to a variable that will be filled with the current global state
+     */
+    void getHighestChildState(timespec* pTimestamp, state_t* pState) const;
 
     /**
      * @brief Check if the transition to the new state is legal and is not denied by
@@ -159,8 +204,29 @@ public:
      */
     virtual void deinitialize();
 
+    /**
+     * @brief  Method to get which is the state until the transitions will be done automatically following its parent
+     *
+     * @return the state enum
+     */
+    autoEnable_t getAutoEnable();
+
+    /**
+     * @brief  Method to set which is the state until the transitions will be done automatically following its parent
+     *
+     *@param autoState state until the transitions will be done automatically following its parent
+     */
+    void setAutoEnable(autoEnable_t autoState);
+
 
 protected:
+
+    /**
+     * @brief Execute the state transition for all first level children
+     *
+     * @return true if all children successfully changed their states
+     */
+    bool setChildrenStates(state_t futureState);
 
     /**
      * @brief Execute the state transition. May be called from a separate thread.
@@ -228,8 +294,16 @@ protected:
     stateChange_t m_recover;           ///< Delegate function for the recover transition
     allowChange_t m_allowChange;       ///< Delegate function for the Allow-Change function
 
+    autoEnable_t m_autoEnable; ///< Attribute for the following change of state of the father Node
+
     std::shared_ptr<PVDelegateInImpl<std::int32_t> > m_pGetStatePV; ///< Delegate PV to which the local state change is pushed
 
+
+private:
+    /**
+     * @brief Common source code to define the body of any constructor.
+     */
+    void constructorBody(void);
 };
 
 

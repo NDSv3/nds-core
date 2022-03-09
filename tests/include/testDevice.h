@@ -45,6 +45,26 @@ private:
     bool allowChange(const nds::state_t, const nds::state_t, const nds::state_t);
 
     void acquire(size_t numAcquisition, size_t numSamples);
+    void PV_DataAcquisition_Gain_Writer(const timespec& timestamp, const double& value) {
+    }
+    void PV_DataAcquisition_Offset_Writer(const timespec& timestamp, const double& value) {
+    }
+    void PV_DataAcquisition_Bandwidth_Writer(const timespec& timestamp, const double& value) {
+    }
+    void PV_DataAcquisition_Resolution_Writer(const timespec& timestamp, const double& value) {
+    }
+    void PV_DataAcquisition_Impedance_Writer(const timespec& timestamp, const double& value) {
+    }
+    void PV_DataAcquisition_Coupling_Writer(const timespec& timestamp, const std::int32_t& value) {
+    }
+    void PV_DataAcquisition_SignalRefType_Writer(const timespec& timestamp, const std::int32_t& value) {
+    }
+    void PV_DataAcquisition_Ground_Writer(const timespec& timestamp, const std::int32_t& value) {
+    }
+    void PV_DataAcquisition_DMAEnable_Writer(const timespec& timestamp, const std::int32_t& value) {
+    }
+    void PV_DataAcquisition_SamplingRate_Writer(const timespec& timestamp, const double& value) {
+    }
 
     void readDelegate(timespec* pTimestamp, std::string* pValue);
     void writeDelegate(const timespec& timestamp, const std::string& value);

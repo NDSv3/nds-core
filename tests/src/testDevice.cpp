@@ -2,8 +2,10 @@
 #include "testDevice.h"
 #include <nds3/nds.h>
 #include <mutex>
-#include <unistd.h>
 #include <functional>
+#include "ndsTestFactory.h"
+#include "ndsTestInterface.h"
+
 
 static std::map<std::string, TestDevice*> m_devicesMap;
 static std::mutex m_lockDevicesMap;
@@ -24,17 +26,26 @@ TestDevice::TestDevice(nds::Factory &factory, const std::string &parameter): m_n
     nds::Node channel1 = rootNode.addChild(nds::Port("Channel1"));
     m_variableIn0 = channel1.addChild(nds::PVVariableIn<std::int32_t>("variableIn0"));
     m_variableIn1 = channel1.addChild(nds::PVVariableIn<std::vector<std::int32_t> >("variableIn1"));
-    m_dataAcquisition = channel1.addChild(nds::DataAcquisition<std::vector<std::int32_t> >("data",
-                                                                                           10000,
-                                                                                           std::bind(&TestDevice::switchOn, this),
-                                                                                           std::bind(&TestDevice::switchOff, this),
-                                                                                           std::bind(&TestDevice::start, this),
-                                                                                           std::bind(&TestDevice::stop, this),
-                                                                                           std::bind(&TestDevice::recover, this),
-                                                                                           std::bind(&TestDevice::allowChange, this,
-                                                                                                     std::placeholders::_1,
-                                                                                                     std::placeholders::_2,
-                                                                                                     std::placeholders::_3)));
+    m_dataAcquisition = channel1.addChild(nds::DataAcquisition<std::vector<std::int32_t> >(
+        "data",
+        10000,
+        std::bind(&TestDevice::switchOn, this),
+        std::bind(&TestDevice::switchOff, this),
+        std::bind(&TestDevice::start, this),
+        std::bind(&TestDevice::stop, this),
+        std::bind(&TestDevice::recover, this),
+        std::bind(&TestDevice::allowChange, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),
+        std::bind(&TestDevice::PV_DataAcquisition_Gain_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&TestDevice::PV_DataAcquisition_Offset_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&TestDevice::PV_DataAcquisition_Bandwidth_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&TestDevice::PV_DataAcquisition_Resolution_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&TestDevice::PV_DataAcquisition_Impedance_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&TestDevice::PV_DataAcquisition_Coupling_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&TestDevice::PV_DataAcquisition_SignalRefType_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&TestDevice::PV_DataAcquisition_Ground_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&TestDevice::PV_DataAcquisition_DMAEnable_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&TestDevice::PV_DataAcquisition_SamplingRate_Writer, this, std::placeholders::_1, std::placeholders::_2)
+    ));
 
     m_numberAcquisitions = channel1.addChild(nds::PVVariableOut<std::int32_t>("numAcquisitions"));
 

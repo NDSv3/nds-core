@@ -36,8 +36,10 @@ public:
      * @brief Constructor.
      *
      * @param what Human readable string describing the cause of the exception.
+     * @param status
      */
-    NdsError(const std::string& what);
+    NdsError(const std::string& what, statusPV_t status = statusPV_t::error);
+    statusPV_t status;
 };
 
 /**
@@ -50,8 +52,9 @@ public:
      * @brief Constructor.
      *
      * @param what Human readable string describing the cause of the exception.
+     * @param status
      */
-    StateMachineError(const std::string& what);
+    StateMachineError(const std::string& what, statusPV_t status = statusPV_t::error);
 };
 
 
@@ -68,8 +71,9 @@ public:
      * @brief Constructor.
      *
      * @param what Human readable string describing the cause of the exception.
+     * @param status
      */
-    StateMachineRollBack(const std::string& what);
+    StateMachineRollBack(const std::string& what, statusPV_t status = statusPV_t::error);
 };
 
 
@@ -81,7 +85,7 @@ public:
 class NDS3_API StateMachineNoSuchTransition: public StateMachineError
 {
 public:
-    StateMachineNoSuchTransition(const std::string& what);
+    StateMachineNoSuchTransition(const std::string& what, statusPV_t status = statusPV_t::error);
 };
 
 
@@ -92,7 +96,7 @@ public:
 class NDS3_API StateMachineTransitionDenied: public StateMachineError
 {
 public:
-    StateMachineTransitionDenied(const std::string& what);
+    StateMachineTransitionDenied(const std::string& what, statusPV_t status = statusPV_t::error);
 };
 
 
@@ -106,7 +110,7 @@ public:
 class NDS3_API TimeConversionError: public NdsError
 {
 public:
-    TimeConversionError(const std::string& what);
+    TimeConversionError(const std::string& what, statusPV_t status = statusPV_t::error);
 };
 
 
@@ -118,7 +122,8 @@ public:
 class NDS3_API NoPortDefinedError: public std::logic_error
 {
 public:
-    NoPortDefinedError(const std::string& what);
+    NoPortDefinedError(const std::string& what, statusPV_t status = statusPV_t::error);
+    statusPV_t pvStatus;
 };
 
 
@@ -129,7 +134,7 @@ public:
 class NDS3_API FactoryError: public NdsError
 {
 public:
-    FactoryError(const std::string& what);
+    FactoryError(const std::string& what, statusPV_t status = statusPV_t::error);
 };
 
 
@@ -140,7 +145,7 @@ public:
 class NDS3_API DirectoryNotFoundError: public FactoryError
 {
 public:
-    DirectoryNotFoundError(const std::string& what);
+    DirectoryNotFoundError(const std::string& what, statusPV_t status = statusPV_t::error);
 };
 
 /**
@@ -150,7 +155,7 @@ public:
 class NDS3_API DriverNotFound: public FactoryError
 {
 public:
-    DriverNotFound(const std::string& what);
+    DriverNotFound(const std::string& what, statusPV_t status = statusPV_t::error);
 };
 
 /**
@@ -160,7 +165,7 @@ public:
 class NDS3_API DriverAlreadyRegistered: public FactoryError
 {
 public:
-    DriverAlreadyRegistered(const std::string& what);
+    DriverAlreadyRegistered(const std::string& what, statusPV_t status = statusPV_t::error);
 };
 
 /**
@@ -170,67 +175,67 @@ public:
 class NDS3_API DriverDoesNotExportRegistrationFunctions: public FactoryError
 {
 public:
-    DriverDoesNotExportRegistrationFunctions(const std::string& what);
+    DriverDoesNotExportRegistrationFunctions(const std::string& what, statusPV_t status = statusPV_t::error);
 };
 
 class NDS3_API ControlSystemNotFound: public FactoryError
 {
 public:
-    ControlSystemNotFound(const std::string& what);
+    ControlSystemNotFound(const std::string& what, statusPV_t status = statusPV_t::error);
 };
 
 class NDS3_API DeviceNotAllocated: public FactoryError
 {
 public:
-    DeviceNotAllocated(const std::string& what);
+    DeviceNotAllocated(const std::string& what, statusPV_t status = statusPV_t::error);
 };
 
 class NDS3_API DeviceAlreadyCreated: public FactoryError
 {
 public:
-    DeviceAlreadyCreated(const std::string& what);
+    DeviceAlreadyCreated(const std::string& what, statusPV_t status = statusPV_t::error);
 };
 
 class PVAlreadyDeclared: public FactoryError
 {
 public:
-    PVAlreadyDeclared(const std::string& what);
+    PVAlreadyDeclared(const std::string& what, statusPV_t status = statusPV_t::error);
 };
 
 class MissingInputPV: public FactoryError
 {
 public:
-    MissingInputPV(const std::string& what);
+    MissingInputPV(const std::string& what, statusPV_t status = statusPV_t::error);
 };
 
 class MissingOutputPV: public FactoryError
 {
 public:
-    MissingOutputPV(const std::string& what);
+    MissingOutputPV(const std::string& what, statusPV_t status = statusPV_t::error);
 };
 
 class MissingDestinationPV: public FactoryError
 {
 public:
-    MissingDestinationPV(const std::string& what);
+    MissingDestinationPV(const std::string& what, statusPV_t status = statusPV_t::error);
 };
 
 class INIParserError: public NdsError
 {
 public:
-    INIParserError(const std::string& what);
+    INIParserError(const std::string& what, statusPV_t status = statusPV_t::error);
 };
 
 class INIParserMissingSection: public INIParserError
 {
 public:
-    INIParserMissingSection(const std::string& what);
+    INIParserMissingSection(const std::string& what, statusPV_t status = statusPV_t::error);
 };
 
 class INIParserSyntaxError: public INIParserError
 {
 public:
-    INIParserSyntaxError(const std::string& what);
+    INIParserSyntaxError(const std::string& what, statusPV_t status = statusPV_t::error);
 };
 
 }

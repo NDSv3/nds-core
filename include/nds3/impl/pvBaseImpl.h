@@ -48,12 +48,23 @@ public:
      * @param pValue
      */
     virtual void read(timespec* pTimestamp, std::int32_t* pValue) const;
+    virtual void read(timespec* pTimestamp, std::int64_t* pValue) const;
+    virtual void read(timespec* pTimestamp, float* pValue) const;
     virtual void read(timespec* pTimestamp, double* pValue) const;
-    virtual void read(timespec* pTimestamp, std::vector<std::int8_t>* pValue) const;
+    virtual void read(timespec* pTimestamp, std::vector<bool>* pValue) const;
     virtual void read(timespec* pTimestamp, std::vector<std::uint8_t>* pValue) const;
+    virtual void read(timespec* pTimestamp, std::vector<std::uint16_t>* pValue) const;
+    virtual void read(timespec* pTimestamp, std::vector<std::uint32_t>* pValue) const;
+    virtual void read(timespec* pTimestamp, std::vector<std::int8_t>* pValue) const;
+    virtual void read(timespec* pTimestamp, std::vector<std::int16_t>* pValue) const;
     virtual void read(timespec* pTimestamp, std::vector<std::int32_t>* pValue) const;
+    virtual void read(timespec* pTimestamp, std::vector<std::int64_t>* pValue) const;
+    virtual void read(timespec* pTimestamp, std::vector<float>* pValue) const;
     virtual void read(timespec* pTimestamp, std::vector<double>* pValue) const;
     virtual void read(timespec* pTimestamp, std::string* pValue) const;
+    virtual void read(timespec* pTimestamp, timespec* pValue) const;
+    virtual void read(timespec* pTimestamp, std::vector<timespec>* pValue) const;
+    virtual void read(timespec* pTimestamp, timestamp_t* pValue) const;
 
     /**
      * @brief Called when the control system wants to write a value.
@@ -64,12 +75,23 @@ public:
      * @param value
      */
     virtual void write(const timespec& timestamp, const std::int32_t& value);
+    virtual void write(const timespec& timestamp, const std::int64_t& value);
+    virtual void write(const timespec& timestamp, const float& value);
     virtual void write(const timespec& timestamp, const double& value);
-    virtual void write(const timespec& timestamp, const std::vector<std::int8_t>& value);
+    virtual void write(const timespec& timestamp, const std::vector<bool>& value);
     virtual void write(const timespec& timestamp, const std::vector<std::uint8_t>& value);
+    virtual void write(const timespec& timestamp, const std::vector<std::uint16_t>& value);
+    virtual void write(const timespec& timestamp, const std::vector<std::uint32_t>& value);
+    virtual void write(const timespec& timestamp, const std::vector<std::int8_t>& value);
+    virtual void write(const timespec& timestamp, const std::vector<std::int16_t>& value);
     virtual void write(const timespec& timestamp, const std::vector<std::int32_t>& value);
+    virtual void write(const timespec& timestamp, const std::vector<std::int64_t>& value);
+    virtual void write(const timespec& timestamp, const std::vector<float>& value);
     virtual void write(const timespec& timestamp, const std::vector<double>& value);
     virtual void write(const timespec& timestamp, const std::string& value);
+    virtual void write(const timespec& timestamp, const timespec& value);
+    virtual void write(const timespec& timestamp, const std::vector<timespec>& value);
+    virtual void write(const timespec& timestamp, const timestamp_t& value);
 
     /**
      * @brief Retrieve the data direction.
@@ -192,12 +214,23 @@ public:
     {
         const int type =
                 int(std::is_same<T, std::int32_t>::value) * (int)dataType_t::dataInt32 +
+				int(std::is_same<T, std::int64_t>::value) * (int)dataType_t::dataInt64 +
+				int(std::is_same<T, float>::value) * (int)dataType_t::dataFloat32 +
                 int(std::is_same<T, double>::value) * (int)dataType_t::dataFloat64 +
-                int(std::is_same<T, std::vector<std::int8_t> >::value) * (int)dataType_t::dataInt8Array +
+				int(std::is_same<T, std::vector<bool> >::value) * (int)dataType_t::dataBoolArray +
                 int(std::is_same<T, std::vector<std::uint8_t> >::value) * (int)dataType_t::dataUint8Array +
+				int(std::is_same<T, std::vector<std::uint16_t> >::value) * (int)dataType_t::dataUint16Array +
+				int(std::is_same<T, std::vector<std::uint32_t> >::value) * (int)dataType_t::dataUint32Array +
+                int(std::is_same<T, std::vector<std::int8_t> >::value) * (int)dataType_t::dataInt8Array +
+                int(std::is_same<T, std::vector<std::int16_t> >::value) * (int)dataType_t::dataInt16Array +
                 int(std::is_same<T, std::vector<std::int32_t> >::value) * (int)dataType_t::dataInt32Array +
+				int(std::is_same<T, std::vector<std::int64_t> >::value) * (int)dataType_t::dataInt64Array +
+				int(std::is_same<T, std::vector<float> >::value) * (int)dataType_t::dataFloat32Array +
                 int(std::is_same<T, std::vector<double> >::value) * (int)dataType_t::dataFloat64Array +
-                int(std::is_same<T, std::string>::value) * (int)dataType_t::dataString;
+                int(std::is_same<T, std::string>::value) * (int)dataType_t::dataString +
+                int(std::is_same<T, timespec>::value) * (int)dataType_t::dataTimespec +
+                int(std::is_same<T, std::vector<timespec>>::value) * (int)dataType_t::dataTimespecArray +
+        		int(std::is_same<T, timestamp_t>::value) * (int)dataType_t::dataTimestamp;
 
         static_assert(type != 0, "Undefined data type");
         return(dataType_t)type;

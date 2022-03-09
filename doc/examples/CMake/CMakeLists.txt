@@ -45,7 +45,7 @@ add_library(
 
 # Add dependencies to the nds3 library
 #-------------------------------------
-find_library(nds3_library NAMES nds3 PATHS ${LIBRARY_LOCATION})
+find_library(nds3_library NAMES nds3 PATHS ${LIBRARY_LOCATION} NO_CMAKE_FIND_ROOT_PATH NO_DEFAULT_PATH)
 target_link_libraries(oscilloscope ${nds3_library})
 target_link_libraries(oscilloscopemultichannel ${nds3_library})
 target_link_libraries(thermometer ${nds3_library})
@@ -57,24 +57,25 @@ execute_process(
   ERROR_QUIET
 )
 
-# Install into correct lib directory for rhel and debian based dists.
-if(CMAKE_INSTALL_PREFIX STREQUAL "/usr/local")
-  set(LIBDEST "lib")
-else()
-  if(DEB_HOST_MULTIARCH STREQUAL "x86_64-linux-gnu\n")
-    set(LIBDEST "lib/x86_64-linux-gnu")
+if (NOT WIN32)
+  # Install into correct lib directory for rhel and debian based dists.
+  if(CMAKE_INSTALL_PREFIX STREQUAL "/usr/local")
+    set(LIBDEST "lib")
   else()
-    set(LIBDEST "lib64")
+    if(DEB_HOST_MULTIARCH STREQUAL "x86_64-linux-gnu\n")
+      set(LIBDEST "lib/x86_64-linux-gnu")
+    else()
+      set(LIBDEST "lib64")
+    endif()
   endif()
+
+  install(
+    TARGETS oscilloscope oscilloscopemultichannel thermometer rpcsquare
+    PERMISSIONS
+      OWNER_READ OWNER_WRITE OWNER_EXECUTE
+      GROUP_READ GROUP_EXECUTE
+      WORLD_READ WORLD_EXECUTE
+      LIBRARY DESTINATION "${LIBDEST}/nds3"
+      COMPONENT "Example drivers"
+  )
 endif()
-
-
-install(
-  TARGETS oscilloscope oscilloscopemultichannel thermometer rpcsquare
-  PERMISSIONS
-    OWNER_READ OWNER_WRITE OWNER_EXECUTE
-    GROUP_READ GROUP_EXECUTE
-    WORLD_READ WORLD_EXECUTE
-    LIBRARY DESTINATION "${LIBDEST}/nds3"
-    COMPONENT "Example drivers"
-)

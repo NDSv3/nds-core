@@ -17,7 +17,7 @@ install:
     - ./scripts/travis-install.sh
 
 script:
-    - ./scripts/travis-script.sh
+    - ./scripts/ci-build.sh
 
 after_success:
     - scripts/deploy_doxygen

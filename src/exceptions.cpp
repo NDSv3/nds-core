@@ -7,96 +7,96 @@
  * file included in the distribution.
  */
 
-#include "../include/nds3/exceptions.h"
+#include "nds3/exceptions.h"
 
 namespace nds
 {
 
-NdsError::NdsError(const std::string &what): std::runtime_error(what)
+NdsError::NdsError(const std::string &what, statusPV_t status): std::runtime_error(what), status(status)
 {
 }
 
-StateMachineError::StateMachineError(const std::string& what): NdsError(what)
+StateMachineError::StateMachineError(const std::string& what, statusPV_t status): NdsError(what, status)
 {
 }
 
-StateMachineRollBack::StateMachineRollBack(const std::string& what): StateMachineError(what)
+StateMachineRollBack::StateMachineRollBack(const std::string& what, statusPV_t status): StateMachineError(what, status)
 {
 }
 
-StateMachineTransitionDenied::StateMachineTransitionDenied(const std::string& what): StateMachineError(what)
+StateMachineTransitionDenied::StateMachineTransitionDenied(const std::string& what, statusPV_t status): StateMachineError(what, status)
 {
 }
 
-StateMachineNoSuchTransition::StateMachineNoSuchTransition(const std::string& what): StateMachineError(what)
+StateMachineNoSuchTransition::StateMachineNoSuchTransition(const std::string& what, statusPV_t status): StateMachineError(what, status)
 {
 }
 
-TimeConversionError::TimeConversionError(const std::string &what): NdsError(what)
+TimeConversionError::TimeConversionError(const std::string &what, statusPV_t status): NdsError(what, status)
 {
 }
 
-NoPortDefinedError::NoPortDefinedError(const std::string &what): std::logic_error(what)
+NoPortDefinedError::NoPortDefinedError(const std::string &what, statusPV_t status ): std::logic_error(what), pvStatus(status)
 {
 }
 
-FactoryError::FactoryError(const std::string &what): NdsError(what)
+FactoryError::FactoryError(const std::string &what, statusPV_t status ): NdsError(what, status)
 {
 }
 
-DirectoryNotFoundError::DirectoryNotFoundError(const std::string &what): FactoryError(what)
+DirectoryNotFoundError::DirectoryNotFoundError(const std::string &what, statusPV_t status): FactoryError(what, status)
 {
 }
 
-DriverNotFound::DriverNotFound(const std::string &what): FactoryError(what)
+DriverNotFound::DriverNotFound(const std::string &what, statusPV_t status ): FactoryError(what, status)
 {
 }
 
-DriverAlreadyRegistered::DriverAlreadyRegistered(const std::string &what): FactoryError(what)
+DriverAlreadyRegistered::DriverAlreadyRegistered(const std::string &what, statusPV_t status): FactoryError(what, status)
 {
 }
 
-DriverDoesNotExportRegistrationFunctions::DriverDoesNotExportRegistrationFunctions(const std::string &what): FactoryError(what)
+DriverDoesNotExportRegistrationFunctions::DriverDoesNotExportRegistrationFunctions(const std::string &what, statusPV_t status ): FactoryError(what, status)
 {
 }
 
-ControlSystemNotFound::ControlSystemNotFound(const std::string &what): FactoryError(what)
+ControlSystemNotFound::ControlSystemNotFound(const std::string &what, statusPV_t status ): FactoryError(what, status)
 {
 }
 
-DeviceNotAllocated::DeviceNotAllocated(const std::string &what): FactoryError(what)
+DeviceNotAllocated::DeviceNotAllocated(const std::string &what, statusPV_t status ): FactoryError(what, status)
 {
 }
 
-DeviceAlreadyCreated::DeviceAlreadyCreated(const std::string &what): FactoryError(what)
+DeviceAlreadyCreated::DeviceAlreadyCreated(const std::string &what, statusPV_t status ): FactoryError(what, status)
 {
 }
 
-PVAlreadyDeclared::PVAlreadyDeclared(const std::string& what): FactoryError(what)
+PVAlreadyDeclared::PVAlreadyDeclared(const std::string& what, statusPV_t status ): FactoryError(what, status)
 {
 }
 
-MissingInputPV::MissingInputPV(const std::string& what): FactoryError(what)
+MissingInputPV::MissingInputPV(const std::string& what, statusPV_t status ): FactoryError(what, status)
 {
 }
 
-MissingOutputPV::MissingOutputPV(const std::string& what): FactoryError(what)
+MissingOutputPV::MissingOutputPV(const std::string& what, statusPV_t status ): FactoryError(what, status)
 {
 }
 
-MissingDestinationPV::MissingDestinationPV(const std::string &what): FactoryError(what)
+MissingDestinationPV::MissingDestinationPV(const std::string &what, statusPV_t status ): FactoryError(what, status)
 {
 }
 
-INIParserError::INIParserError(const std::string& what): NdsError(what)
+INIParserError::INIParserError(const std::string& what, statusPV_t status ): NdsError(what, status)
 {
 }
 
-INIParserMissingSection::INIParserMissingSection(const std::string& what): INIParserError(what)
+INIParserMissingSection::INIParserMissingSection(const std::string& what, statusPV_t status ): INIParserError(what, status)
 {
 }
 
-INIParserSyntaxError::INIParserSyntaxError(const std::string &what): INIParserError(what)
+INIParserSyntaxError::INIParserSyntaxError(const std::string &what, statusPV_t status ): INIParserError(what, status)
 {
 }
 

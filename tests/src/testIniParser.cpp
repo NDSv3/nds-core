@@ -1,8 +1,10 @@
+#include <sstream>
+
 #include <gtest/gtest.h>
 #include <nds3/nds.h>
-#include "testDevice.h"
+
 #include "ndsTestInterface.h"
-#include <sstream>
+
 
 TEST(testIniParser, parseFile)
 {

@@ -159,6 +159,7 @@ public:
      * @param command
      * @param usage
      * @param numParameters
+     * @param function
      */
     void defineCommand(const std::string& command, const std::string& usage, const size_t numParameters, const command_t function);
 

@@ -31,9 +31,10 @@ class PortImpl: public NodeImpl
 public:
     /**
      * @brief Construct an AsynPort.
-     *
-     * @param port's name. Used also as port name in the AsynDriver
-     */
+        *
+        * @param name
+        * @param nodeType
+        */
     PortImpl(const std::string& name, const nodeType_t nodeType);
 
     virtual ~PortImpl();
@@ -48,13 +49,14 @@ public:
      */
     virtual std::shared_ptr<PortImpl> getPort();
 
+    void registerReporter(reporter_t reporter);
 
     void registerPV(std::shared_ptr<PVBaseImpl> pv);
 
     void deregisterPV(std::shared_ptr<PVBaseImpl> pv);
 
     template<typename T>
-    void push(std::shared_ptr<PVBaseImpl> pv, const timespec& timestamp, const T& value);
+    void push(std::shared_ptr<PVBaseImpl> pv, const timespec& timestamp, const T& value, const statusPV_t& status = statusPV_t::success);
 
     virtual std::string buildFullNameFromPort(const FactoryBaseImpl& controlSystem) const;
     virtual std::string buildFullExternalNameFromPort(const FactoryBaseImpl& controlSystem) const;

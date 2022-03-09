@@ -30,10 +30,12 @@
 namespace nds
 {
 
+
+
 /**
  * @brief Available states, ordered by priority (lowest to higher).
  */
-enum class state_t
+enum class state_t : int
 {
     unknown,      ///< The state is Unknown
     off,          ///< The device is switched off
@@ -48,18 +50,54 @@ enum class state_t
 };
 
 /**
+ * @brief Available levels of automatic change in the State Machines that are following the state of the father Node.
+ */
+enum class autoEnable_t : int
+{
+    none=static_cast<int>(state_t::unknown),          ///< The node won't follow its father STM
+    off=static_cast<int>(state_t::off),          ///< The node will follow its father until OFF state
+    on=static_cast<int>(state_t::on),          ///< The node will follow its father until ON state
+    running=static_cast<int>(state_t::running)   ///< The node will follow its father until RUNNING state
+
+};
+
+
+/**
  * @brief PV data types
  */
 enum class dataType_t
 {
     /* The value zero is reserved to static asserts to verify that the correct cpp types are being used */
     dataInt32 = 1,    ///< Signed integer, 32 bits
+    dataFloat32,      ///< Float, 32 bits
     dataFloat64,      ///< Float, 64 bits
-    dataInt8Array,    ///< Array of signed 8 bit integers
+    dataBoolArray,    ///< Array of Bool
     dataUint8Array,   ///< Array of unsigned 8 bit integers
+    dataUint16Array,   ///< Array of unsigned 8 bit integers
+    dataUint32Array,   ///< Array of unsigned 8 bit integers
+    dataInt8Array,    ///< Array of signed 8 bit integers
+    dataInt16Array,   ///< Array of signed 16 bit integers
     dataInt32Array,   ///< Array of signed 32 bit integers
+    dataFloat32Array, ///< Array of 32 bit floats
     dataFloat64Array, ///< Array of 64 bit floats
-    dataString        ///< String
+    dataString,       ///< String
+    dataTimespec,     ///< Timespec
+    dataTimespecArray, ///< Array of timespec
+    dataTimestamp,  //< Timestamp structure
+    dataInt64,  //< Int 64
+    dataInt64Array  //< Array of signed 64 bit integers
+};
+
+/**
+ * @brief Data type to report the status for updating values in Input PVs.
+ */
+enum class statusPV_t {
+  success = 0,     //!< Value updated successfully.
+  timeout = 1,     //!< Timeout.
+  overflow = 2,    //!< Overflow.
+  disconnected = 3,//!< Disconnected.
+  disabled = 4,     //!< Disabled.
+  error = 5       //!< Any other error not gathered in previous status.
 };
 
 /**
@@ -204,6 +242,20 @@ enum class outputPvType_t
 typedef std::vector<std::string> parameters_t;
 
 /**
+ * @brief Type defined for handling a timestamp with its associated parameters
+ *
+ * It contains fields to represent:
+ * - timestamp
+ * - counter to identify the timestamp
+ * - boolean to indicate whether the timestamp happens with a rising or falling edge
+ */
+typedef struct {
+    timespec timestamp; //Moment at the timestamp happened
+    std::int32_t id; //Identifier of the timestamp
+    bool edge; //Type of edge that triggers the timestamp (rising=true; falling=false)
+} timestamp_t;
+
+/**
  * @brief Definition of a function called to execute a node's command.
  *
  * It receives a vector of string parameters. It is the responsability of
@@ -259,11 +311,11 @@ typedef std::function<void ()> stateChange_t;
  *
  * The function receives 3 parameters:
  * - the first one represents the current state
- * - the secont one represents the current global state
- * - the last one represents the desidered state
+ * - the second one represents the current global state
+ * - the last one represents the desired state
  *
  * The function must return true if the transition from the current state to
- *  the desidered state is allowed, or false otherwise.
+ *  the desired state is allowed, or false otherwise.
  *
  * This function is called only after the state machine has verified that
  *  the requested transition is legal.
@@ -288,6 +340,45 @@ typedef std::function<void ()> threadFunction_t;
 typedef std::list<std::string> enumerationStrings_t;
 
 
+typedef std::function<void (timespec* time, std::int32_t* val)> readerInt32_t;
+typedef std::function<void (timespec* time, std::int64_t* val)> readerInt64_t;
+typedef std::function<void (timespec* time, double* val)> readerDouble_t;
+typedef std::function<void (timespec* time, std::vector<bool>* val)> readerVectorBool_t;
+typedef std::function<void (timespec* time, std::vector<std::uint8_t>* val)> readerVectorUInt8_t;
+typedef std::function<void (timespec* time, std::vector<std::uint16_t>* val)> readerVectorUInt16_t;
+typedef std::function<void (timespec* time, std::vector<std::uint32_t>* val)> readerVectorUInt32_t;
+typedef std::function<void (timespec* time, std::vector<std::int8_t>* val)> readerVectorInt8_t;
+typedef std::function<void (timespec* time, std::vector<std::int16_t>* val)> readerVectorInt16_t;
+typedef std::function<void (timespec* time, std::vector<std::int32_t>* val)> readerVectorInt32_t;
+typedef std::function<void (timespec* time, std::vector<std::int64_t>* val)> readerVectorInt64_t;
+typedef std::function<void (timespec* time, std::vector<double>* val)> readerVectorDouble_t;
+typedef std::function<void (timespec* time, std::string* val)> readerString_t;
+typedef std::function<void (timespec* time, timespec* val)> readerTime_t;
+typedef std::function<void (timespec* time, std::vector<timespec>* val)> readerVectorTime_t;
+typedef std::function<void (timespec* time, timestamp_t* val)> readerTimestamp_t;
+
+typedef std::function<void (const timespec&, const std::int32_t&)> writerInt32_t;
+typedef std::function<void (const timespec&, const std::int64_t&)> writerInt64_t;
+typedef std::function<void (const timespec&, const double&)> writerDouble_t;
+typedef std::function<void (const timespec&, const std::vector<bool>&)> writerVectorBool_t;
+typedef std::function<void (const timespec&, const std::vector<std::uint8_t>&)> writerVectorUInt8_t;
+typedef std::function<void (const timespec&, const std::vector<std::uint16_t>&)> writerVectorUInt16_t;
+typedef std::function<void (const timespec&, const std::vector<std::uint32_t>&)> writerVectorUInt32_t;
+typedef std::function<void (const timespec&, const std::vector<std::int8_t>&)> writerVectorInt8_t;
+typedef std::function<void (const timespec&, const std::vector<std::int16_t>&)> writerVectorInt16_t;
+typedef std::function<void (const timespec&, const std::vector<std::int32_t>&)> writerVectorInt32_t;
+typedef std::function<void (const timespec&, const std::vector<std::int64_t>&)> writerVectorInt64_t;
+typedef std::function<void (const timespec&, const std::vector<double>&)> writerVectorDouble_t;
+typedef std::function<void (const timespec&, const std::string&)> writerString_t;
+typedef std::function<void (const timespec&, const timespec&)> writerTime_t;
+typedef std::function<void (const timespec&, const std::vector<timespec>&)> writerVectorTime_t;
+typedef std::function<void (const timespec&, const timestamp_t&)> writerTimestamp_t;
+/**
+ * @brief Reporter function typedef.
+ */
+typedef std::function<void (FILE*, int)> reporter_t;
+typedef std::function<void (void)> dbParser_t;
+
 } // namespace nds
 
 /**
@@ -300,19 +391,19 @@ typedef std::list<std::string> enumerationStrings_t;
 #define NDS_DEFINE_DRIVER(driverName, className)\
 extern "C" \
 { \
-void* allocateDevice(nds::Factory& factory, const std::string& device, const nds::namedParameters_t& parameters) \
+NDS3_HELPER_DLL_EXPORT void* allocateDevice(nds::Factory& factory, const std::string& device, const nds::namedParameters_t& parameters) \
 { \
     return new className(factory, device, parameters); \
 } \
-void deallocateDevice(void* device) \
+NDS3_HELPER_DLL_EXPORT void deallocateDevice(void* device) \
 { \
     delete (className*)device; \
 } \
-const char* getDeviceName() \
+NDS3_HELPER_DLL_EXPORT const char* getDeviceName() \
 { \
     return #driverName; \
 } \
-nds::RegisterDevice<className> registerDevice##driverName(#driverName); \
+NDS3_HELPER_DLL_EXPORT nds::RegisterDevice<className> registerDevice##driverName(#driverName); \
 } // extern "C"
 
 // Generic helper definitions for shared library support

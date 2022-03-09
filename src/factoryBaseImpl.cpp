@@ -179,6 +179,8 @@ void FactoryBaseImpl::destroyDevice(const std::string& deviceName)
     destroyDevice(pDevice);
 }
 
+void FactoryBaseImpl::registerDBParser(dbParser_t){
+}
 
 ThreadBaseImpl* FactoryBaseImpl::runInThread(const std::string &name, threadFunction_t function)
 {

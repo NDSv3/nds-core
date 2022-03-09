@@ -39,10 +39,11 @@ TEST(testNamingRules, testDefaultRules)
     factory.loadNamingRules(rulesStream);
 
     nds::Port rootNode("rootNode");
+
     std::function<void(void)> function(std::bind(&::noFunction));
     std::function<bool(const nds::state_t, const nds::state_t, const nds::state_t)> allowStateChange(std::bind(&::allowStateChangeFunction, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
     nds::Base stateMachine = rootNode.addChild(nds::StateMachine(true, function, function, function, function, function, allowStateChange));
-    nds::Base acquisition = rootNode.addChild(nds::DataAcquisition<std::int32_t>("Acquisition", 100, function, function, function, function, function, allowStateChange));
+    //nds::Base acquisition = rootNode.addChild(nds::DataAcquisition<std::int32_t>("Acquisition", 100, function, function, function, function, function, allowStateChange));
 
     nds::Node child0 = rootNode.addChild(nds::Node("child0"));
     nds::Node child1 = child0.addChild(nds::Node("child1", nds::nodeType_t::inputChannel));
@@ -58,9 +59,12 @@ TEST(testNamingRules, testDefaultRules)
 
     rootNode.initialize(0, factory);
 
+    EXPECT_EQ("", rootNode.getFullNameFromPort());
+    EXPECT_EQ("rootNode", rootNode.getFullName());
+    EXPECT_EQ("rootNode", rootNode.getComponentName());
     EXPECT_EQ(";;ROOTrootNode", rootNode.getFullExternalName());
     EXPECT_EQ(";;ROOTrootNode+STATE", stateMachine.getFullExternalName());
-    EXPECT_EQ(";;ROOTrootNode+SOURCEAcquisition", acquisition.getFullExternalName());
+   // EXPECT_EQ(";;ROOTrootNode+SOURCEAcquisition", acquisition.getFullExternalName());
     EXPECT_EQ(";;ROOTrootNode+GENERICchild0", child0.getFullExternalName());
     EXPECT_EQ(";;ROOTrootNode+GENERICchild0/INPUTchild1", child1.getFullExternalName());
     EXPECT_EQ(";;ROOTrootNode+GENERICchild0/INPUTchild1/OUTPUTchild2", child2.getFullExternalName());
@@ -98,7 +102,7 @@ TEST(testNamingRules, testFallbackRules)
     std::function<void(void)> function(std::bind(&::noFunction));
     std::function<bool(const nds::state_t, const nds::state_t, const nds::state_t)> allowStateChange(std::bind(&::allowStateChangeFunction, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
     nds::Base stateMachine = rootNode.addChild(nds::StateMachine(true, function, function, function, function, function, allowStateChange));
-    nds::Base acquisition = rootNode.addChild(nds::DataAcquisition<std::int32_t>("Acquisition", 100, function, function, function, function, function, allowStateChange));
+    //nds::Base acquisition = rootNode.addChild(nds::DataAcquisition<std::int32_t>("Acquisition", 100, function, function, function, function, function, allowStateChange));
 
     nds::Node child0 = rootNode.addChild(nds::Node("child0"));
     nds::Node child1 = child0.addChild(nds::Node("child1", nds::nodeType_t::inputChannel));
@@ -116,7 +120,7 @@ TEST(testNamingRules, testFallbackRules)
 
     EXPECT_EQ("/GENERICrootNode", rootNode.getFullExternalName());
     EXPECT_EQ("/GENERICrootNode+STATE", stateMachine.getFullExternalName());
-    EXPECT_EQ("/GENERICrootNode+INPUTAcquisition", acquisition.getFullExternalName());
+    //EXPECT_EQ("/GENERICrootNode+INPUTAcquisition", acquisition.getFullExternalName());
     EXPECT_EQ("/GENERICrootNode+GENERICchild0", child0.getFullExternalName());
     EXPECT_EQ("/GENERICrootNode+GENERICchild0/INPUTchild1", child1.getFullExternalName());
     EXPECT_EQ("/GENERICrootNode+GENERICchild0/INPUTchild1/GENERICchild2", child2.getFullExternalName());

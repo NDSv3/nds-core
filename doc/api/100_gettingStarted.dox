@@ -15,132 +15,569 @@ Here we assume that you already installed the NDS3 library and the NDS3 control 
 Device Supports for the NDS3 framework must declare the device functionalities using a tree-like structure: the tree 
 structure can be composed by:
 
-- Nodes
 - Process Variables (PVs)
-
-
-@subsection getting_started_nodes Nodes
-
-A node can contain children nodes or PVs. There are several kind of nodes:
-
-- plain Node: it is just used to organize the device's component
-- Port: it is a node that is able to communicate with an instance of the underlying control system. All the children
-  of a port will communicate with the control system using their parent port
-- StateMachine: a node that comes with few pre-defined children representing the node's state and supplies few
-  functionalities to manage the states
-- DataAcquisition: a node that comes with few pre-defined children PVs and a state machine useful for controlling
-  data acquisition.
-
-The responsability of defining the device structure falls on the constructor of the class that the developer decides
-to use as representation of the device: when a specific device support is needed then NDS3 will allocate and
-construct the class that represents the device and expects that the constructor of the class will specify all the nodes
-and PVs that are needed.
+- Nodes
 
 
 @subsection getting_started_pvs Process variables
 
-PVs, or Process Variables, are variables that are visible from both the Device Support and from the clients connected to
-the control system.
+In NDS, a PV is an object of a specific data type, with a unique, well-defined name and data type used by the hosting control system to operate on it. These operations are done through a specific communication interface. PVs are objects that are visible to both the NDS Device Driver and the clients connected to the control system. PV access from the Device Driver is done with a methodology described later.
+In NDS, there are different types of PVs:
+-	Process Variable in and out (PVVariableIn and PVVariableOut). These PV Variables own (and store) the value written by the Device Driver or by the Control System and provide this internal value on-demand to the Device Driver and the Control System. This means the Device Driver can read or write the value at any time, without worrying about the mechanism and the timing that the Control System will use to access the PV. Two options are available: 
+	- Process Variables of type in are elements that are read by the control system (and its clients) and written (or read if necessary) by the Device Driver. E.g., for a thermometer Device Driver, the voltage read from the hardware will be updated periodically and converted to temperature. This value will be pushed to the control system through a PVVariableIn. Input PVs also support the push model, allowing the Device Driver to push data to the control system at any moment.
+	- Process Variables of type out are elements that are written by the control system (and its clients) and read (or written if necessary) by the Device Driver. E.g., for a power supply Device Driver, the command to control the supply will be sent to the hardware every time the PVVariableOut is written by the control system.
+-	Process Variable Delegate in and out (PVDelegateIn and PVDelegateOut). These kinds of PV only implement an interface and do not have a value stored with them. Every action in the PV (read or write) calls a predefined Device Support function when the Control System wants to read or write some data from/to the PV 
 
-NDS3 differentiates between input PVs and output PVs;
-
-- input PVs are WRITTEN by the Device Support and READ by the control system and its clients
-- output PVs are READ by the Device Suppoer and WRITTEN by the control system and its clients
-
-For instance, a device representing a temperature sensor will have one *input* PV that it will update regularly with the
-detected temperature, while a power supply could have an *output* PV that set the desidered output voltage.
-
-NDS3 provides 2 kinds of input and output PVs:
-
-- PVVariableIn and PVVariableOut: the Variable PVs are responsible for storing the value written by the Device Support or
-  by the Control System and are able to supply the internal value on demand to both the Device Support and the Control System.
-  This means that the Device Support can just read or write a value into them when it is convenient, without worrying about
-  the mechanism and the timing that the Control System will use to read/write the PV
-- PVDelegateIn and PVDelegateOut: the Delegate PVs will call a predefined Device Support's function when the Control System
-  wants to read or write some data from/to the PV
-
-All the input PVs also support the push model, which allows the Device Support to forcefully push data to the Control System
-at any moment.
+@image html hierarchyNDSPVs.png Hierarchy of PV Types in NDS
+@image latex hierarchyNDSPVs.png Hierarchy of PV Types in NDS
 
 
-@section getting_started_thermometer A simple Device Support: a thermometer
 
-The first device that we are going to build is a really simple thermometer: It has a single input PV which supplies the
-temperature in Kelvin degrees. 
-  
-The structure of the termomether device is really simple: it provides a root node (a Port, so it can communicate with the
-Control System) that represents the device and an input PV that the control system will read to get the current temperature.
+@subsection getting_started_nodes Nodes
 
+@attention
+It is essential to understand that each node has a unique name identifying it.
 
-@subsection getting_started_thermometer_source_code The source code
+In the NDS model, the functionality of the Device Driver is implemented using so-called nodes. Nodes are elements that allow the driver developer to organize the driver's functionality. These nodes can be used hierarchically, creating a node made up of other nodes and PVs.
 
-Let's put this in C++ form:
-@include thermometer/thermometer.cpp
+@attention
+See the User Manual for more information about the nodes and the NDS PVs that each node includes.
 
-What did we do with this code?
-
-The constructor takes three parameters passed by NDS3 when it allocates the device:
-
-- factory: this parameter contains an interface to the Control System that requested the creation of the device
-- deviceName: the name with which the device should be presented to the control system. Usually it is used as name of the root node
-- parameters: a map of named parameters that are specific for each Device Support. The implementor of the Device Support can decide
-  how to use the parameters
-
-We allocate a Port as root node: a Port node holds a reference to the underlying control system. PVs can be added only to Ports or to
-nodes that have a Port up in the hierarchy.
-
-The variable rootNode contains a shared pointer to the acual implementation of the Port: when we will register rootNode with the
-Control System then NDS will take care of storing the shared pointer internally and therefore the Port will continue to exists
-even after rootNode goes out of scope.
-
-@attention In NDS3, all the device components just hold shared pointers to the actual components implementation.
-
-After we declare the root node then we call nds::Node::addChild() on it to add a child component, in our case a PVDelegateIn that handles double
-floating point values.
-PVDelegateIN PVs are not able to store the value internally but rely on a function that is called when the control system wants
-to read the value. In our case we provide a callback to getTemperature() which always return 10 degrees Kelvin.
-
-Finally we call initialize() which registers the root node and its children with the Control System.
-
-If we are running our Device Support using EPICS as control system then the following PV will be available:
-
-@verbatim
-rootNodeName-Temperature
-@endverbatim
-
-Issuing a dbpf rootNodeName-Temperature.PROC 1 will cause the framework to call getTemperature() and fill the PV with the value 10.
+- Common NDS Nodes
+	- @ref nds::Port "Port": It is a node that is able to communicate with an instance of the underlying control system (CS). All the children of a port will communicate with the CS using their parent port. The Port node is the starting point to organize all Device Drivers components in the tree-like structure.
+	- @ref nds::StateMachine "State Machine": Provides an instance of the standard NDS finite state machine. It includes a few pre-defined child nodes representing the node's state and supplies a few functionalities to manage the states' transition. 
+- Complex NDS Nodes: Although a developer can create custom Nodes, some have been developed to try to unify and help the development of the most common types or operations.
+	- @ref nds::DataAcquisition "Data Acquisition": Provides the necessary infrastructure to implement the data acquisition functionality.
+	- @ref nds::WaveformGeneration "Waveform Generation": Provides data waveform generation for different data types.
+	- @ref nds::DigitalIO "Digital I/O": Provides basic services for digital input/output.
+	- @ref nds::HQMonitor "Health Monitoring": Provides PVs related to the status of the hardware device managed by the Device Driver.
+	- @ref nds::Firmware "Firmware Support": Provides different PVs related to firmware support, and the device type, serial number, etc. of the hardware device managed by the Device Driver. 
+	- @ref nds::Timing "Timing": Provides PVs related to the configuration and management of all timing-related parameters of the hardware handled by the Device Driver. 
+	- @ref nds::Timestamping "Time Stamping": Provides PVs related to the time stamping of acquired data. 
+	- @ref nds::TriggerAndClk "Triggering and Clock": Provides different PVs related to triggering actions, hardware clocks and their configuration.
+	- @ref nds::FTE "Future Time Events": Provides different PVs related to future time event generation. 
+	- @ref nds::Routing "Signal Routing": Provides different PVs related to signal routing.
 
 
-@subsection getting_started_thermometer_compilation Compiling the source code
 
-The Makefile for a NDS3 device is quite straightforward: it does not depend on EPICS or any other Control System you may be using and
-you just have to make sure that it includes the shared library nds3 and specify the flag NDS3_DLL (tells the compiler that the NDS3
-is being linked dynamically).
+@section getting_started_example_NDS_driver 3. Example: Using NDS-CORE with a test Control System
 
-An example for our thermometer:
-@include thermometer/Makefile
+This section describes all necessary steps to implement an NDS Device Driver, including instructions for testing. The example device will consist of a rootNode, a state machine, a complex NDS node (Data Acquisition), and some additional PVs.
+
+@image html exampleNDSCOREtree.svg Tree-like structure of the example NDS Device Driver
+@image latex exampleNDSCOREtree.png Tree-like structure of the example NDS Device Driver
+
+@note
+Example is available at "src/c++/examples/nds-example"
+@note
+Example's tests are available at "src/test/c++/nds-example"
+
+@subsection getting_started_example_NDS_driver_header Header file
+The following points described the content of the header file needed for the implementation of an NDS Device Driver.
+
+The @ref nds-example.h file contains the basic definition of an NDS device driver. The required functions are the constructor, the destructor, the function to allocate the driver's resources, the function to de-allocate the resources, and a function to retrieve the name of the device driver. These functions must be public for the control system to access them and manage the Device Driver. 
+@code{.cpp}
+#include <nds3/nds.h>
+
+//Class that declares and implement a fictional Device
+class Device
+{
+
+public:
+    //Constructor
+    Device(nds::Factory& factory, const std::string& deviceName, const nds::namedParameters_t& );
+    //Destructor
+    ~Device();
 
 
-This makefile will generate the shared module libthermometer.so. Now you can load the device into your NDS3 control system of choice and
-run it.
+
+    //Allocation method
+    static void* allocateDevice(nds::Factory& factory, const std::string& deviceName, const nds::namedParameters_t& parameters);
+    //Deallocation method
+    static void deallocateDevice(void* deviceName);
 
 
-@subsection getting_started_thermometer_using_device_epics Using the Thermometer device on EPICS
+    /*
+     * For test purposes we make it possible to retrieve running instances of
+     *  the device
+     */
+    static Device* getInstance(const std::string& deviceName);
 
-On EPICS you will use the command @epics_commands_ndsloaddriver to load the shared module and the command @epics_commands_ndscreatedevice
-to allocate and construct the device.
+@endcode
 
-For instance:
-@verbatim
-epics> ndsLoadDriver path/to/libthermometer.so
-epics> ndsCreateDevice Thermometer testDevice
-epics> iocInit
-epics> dbl
-testDevice-Temperature
-epics> dbpf testDevice-Temperature.PROC 1
-epics> dbgf testDevice-Temperature
-10
-@endverbatim
+However, in most cases, more functions, variables and objects need to be defined. In the example, this consist of:
+	-# Variables needed for the node.
+	@code{.cpp}
+	private:
+
+    //Device name
+    std::string m_name;
+	@endcode
+	-# The state machine and its related functions and variables. 
+	@code{.cpp}
+	private:
+    // Device State Machine
+    nds::StateMachine m_Device_stateMachine;
+
+    //Methods to control Device state machine.
+    void switchOn_Device();  //Called to switch on the Device
+    void switchOff_Device(); //Called to switch off the Device
+    void start_Device();     //Called to start the Device
+    void stop_Device();      //Called to stop the Device 
+    void recover_Device();   //Called to recover the Device from
+    //a failure.
+    bool allow_Device_Change(const nds::state_t, const nds::state_t, const nds::state_t); //Called to verify if a state change is allowed
+	@endcode
+	-# The data acquisition node and its related functions and variables. 
+	@code{.cpp}
+	//DataAcquisition Node
+    nds::DataAcquisition<std::vector<double> > m_DataAcquisition;
+
+    //Methods to control DataAcquisition Node state machine.
+    void switchOn_DataAcquisition();  //Called to switch on the DataAcquisition node.
+    void switchOff_DataAcquisition(); //Called to switch off the DataAcquisition node.
+    void start_DataAcquisition();     //Called to start the DataAcquisition node.
+    void stop_DataAcquisition();      //Called to stop the DataAcquisition node.
+    void recover_DataAcquisition();   //Called to recover the DataAcquisition node from a failure.
+    bool allow_DataAcquisition_Change(const nds::state_t, const nds::state_t, const nds::state_t); //Called to verify if a state change is allowed
+
+    //DataAcquisition setters
+    void PV_DataAcquisition_Gain_Writer(const timespec& timestamp, const double& value);
+    void PV_DataAcquisition_Offset_Writer(const timespec& timestamp, const double& value);
+    void PV_DataAcquisition_Bandwidth_Writer(const timespec& timestamp, const double& value);
+    void PV_DataAcquisition_Resolution_Writer(const timespec& timestamp, const double& value);
+    void PV_DataAcquisition_Impedance_Writer(const timespec& timestamp, const double& value);
+    void PV_DataAcquisition_Coupling_Writer(const timespec& timestamp, const std::int32_t& value);
+    void PV_DataAcquisition_SignalRefType_Writer(const timespec& timestamp, const std::int32_t& value);
+    void PV_DataAcquisition_Ground_Writer(const timespec& timestamp, const std::int32_t& value);
+    void PV_DataAcquisition_DMAEnable_Writer(const timespec& timestamp, const std::int32_t& value);
+    void PV_DataAcquisition_SamplingRate_Writer(const timespec& timestamp, const double& value);
+    
+    /**
+     * DataAcquisition initializers
+     */
+    void PV_DataAcquisition_Gain_Initializer(timespec* timestamp, double* value);
+    void PV_DataAcquisition_Offset_Initializer(timespec* timestamp, double* value);
+    void PV_DataAcquisition_Bandwidth_Initializer(timespec* timestamp, double* value);
+    void PV_DataAcquisition_Resolution_Initializer(timespec* timestamp, double* value);
+    void PV_DataAcquisition_Impedance_Initializer(timespec* timestamp, double* value);
+    void PV_DataAcquisition_Coupling_Initializer(timespec* timestamp, int32_t* value);
+    void PV_DataAcquisition_SignalRefType_Initializer(timespec* timestamp, int32_t* value);
+    void PV_DataAcquisition_Ground_Initializer(timespec* timestamp, int32_t* value);
+    void PV_DataAcquisition_DMAEnable_Initializer(timespec* timestamp, int32_t* value);
+    void PV_DataAcquisition_SamplingRate_Initializer(timespec* timestamp, double* value);
+
+    //Function that continuously acquires data. It is launched by
+    //start_DataAcquisition() in a separate thread.
+    void DataAcquisition_thread_body();
+
+    //A thread that runs DataAcquisition_thread_body().
+    nds::Thread m_DataAcquisition_Thread;
+
+    //A boolean flag that stop the DataAcquisition loop in
+    //DataAcquisition_thread_body() when true.
+    volatile bool m_bStop_DataAcquisition;
+    
+	@endcode
+	-# The PVs In and Out of datatype std::vector<double>>.
+	@code{.cpp}
+	// PVs
+    nds::PVVariableIn<std::vector<double>> m_VarIn_vDBL;
+    nds::PVVariableOut<std::vector<double>> m_VarOut_vDBL;
+	@endcode
+	
+@subsection getting_started_example_NDS_driver_source Source file
+The file @ref nds-example.cpp contains the code supporting the implementation of the device driver.  We are going to review the creation of the constructor and the basic steps to get a functional driver.
+-# First, the constructor has a reference to the nds::Factory, the device name and the additional parameters of this, as defined by the user. At the end of the file you have a macro with the definition of the NDS device driver name that will be use to identify it. You can have multiple instances of the same device driver (if the Linux Device Driver allows it) but not different NDS Device drivers with the same identification.
+@code{.cpp}
+#include "nds-example.h"
+#include <iostream>
+#include <mutex>
+#include <unistd.h>
+#include <nds3/nds.h>
+#define NDS_EPOCH 1514764800 /* 00:00 of 1/1/2018 in UTC format. */
+
+using namespace std;
+using namespace std::placeholders;
+static std::map<std::string, Device*> m_DevicesMap;
+
+static std::mutex m_lockDevicesMap;
+
+Device::Device(nds::Factory &factory, const std::string &DeviceName, const nds::namedParameters_t & parameters ):
+m_name(DeviceName)
+
+{
+    //code omitted....
+}
+.
+.
+.
+NDS_DEFINE_DRIVER(Device, Device)
+@endcode
+-# The rootNode is added inside the constructor. It is a good practice to name the rootNode with the device name. Also, declare it of type nds::Port. This means that the rootNode will be responsible for the communication with the control system. It is possible to have the root node as a simple Node and promote one or more of its children to type nds::Port, so each port will interface with different control systems.
+@code{.cpp}
+nds::Port rootNode(DeviceName);
+@endcode
+-# Add nodes and PVs to the rootNode.
+	-# PVVariableIn
+		-# Create the object (array of double type)
+		@code{.cpp}
+		m_VarIn_vDBL=nds::PVVariableIn<std::vector<double>>("VarIn_vDBL");
+		@endcode
+		-# Set the number of elements
+		@code{.cpp}
+		m_VarIn_vDBL.setMaxElements(2); //initializing the PV with 2 elements
+		@endcode
+		-# Set its initial value, optionally setting a time stamp value, and register it as a rootNode's child. This value must be set before adding the PV to the node.
+		@code{.cpp}
+		m_VarIn_vDBL.setValue(std::vector<double>(2,0));
+		rootNode.addChild(m_VarIn_vDBL);
+		@endcode
+	-# PVVariableOut
+		-# Create the object and register it as a rootNode's child.
+		@code{.cpp}
+		m_VarOut_vDBL=rootNode.addChild(nds::PVVariableOut<std::vector<double>>("VarOut_vDBL"));
+		@endcode
+		@attention
+		All PVVariableOut PVs are initialized to zero.
+		
+-# Add a StateMachine node
+	-# The State Machine node provides a hierarchical state machine for the rootNode. The constructor requires passing it the methods that will be executed on the different transitions between the states.
+	@code{.cpp}
+	m_Device_stateMachine=rootNode.addChild(nds::StateMachine(true,
+            std::bind(&Device::switchOn_Device, this),
+            std::bind(&Device::switchOff_Device,this),
+            std::bind(&Device::start_Device,this),
+            std::bind(&Device::stop_Device,this),
+            std::bind(&Device::recover_Device,this),
+            std::bind(&Device::allow_Device_Change,this,std::placeholders::_1,std::placeholders::_2,std::placeholders::_3)
+    	));
+	@endcode
+	-# Next, methods must be implemented with the user-desired behaviour of the state machine.
+	@code{.cpp}
+	/**
+	 * Methods to control Device state machine
+	 */
+	
+	void Device::switchOn_Device(){
+	
+	}
+	void Device::switchOff_Device(){
+	
+	}
+	void Device::start_Device(){
+	
+	}
+	void Device::stop_Device(){
+	
+	}
+	void Device::recover_Device(){
+	
+	}
+	
+	bool Device::allow_Device_Change(const nds::state_t, const nds::state_t, const nds::state_t){
+		return true;
+	}
+	@endcode
+
+-# Add DataAcquisition node
+	-# The functionality of the NDS Device Driver is implemented by adding specific nodes already provided by NDS-CORE. For example, the DataAcquisition Node contains the basic infrastructure for supporting the data acquisition of your device. The following code instantiates the DataAcquisition Node with a buffer of 128 samples of double type. The node includes a state machine to control the data acquisition process itself and some functions for the getters and setters of the predefined PVs related to the DAQ process.
+	-# Initial PV values for the DataAcquisition node
+		-# The complex NDS nodes support two different constructors. One of them add the option to put the initial values of the PVs. In this introductory example we show how the driver can include an input parameter , INIT, to select what constructor will be used in the driver to set if the  PVs will have an initial value. The driver developer has to define the initial values for the variable PVs and the methods executed at the initialization for the delegate PVs using the handler provided by NDS-Core, the handler also requires passing it the methods that will be executed on the different transitions between the states and the methods executed by the delegate PVs during the regular execution of the driver. 
+		@code{.cpp}
+		nds::namedParameters_t::const_iterator findParam = parameters.find("INIT");
+
+		if (findParam != parameters.end() && findParam->second=="YES") {
+		
+		nds::DataAcquisitionArgs_t handlerDAQ = nds::DataAcquisitionArgs_t (
+				std::bind(&Device::switchOn_DataAcquisition, this),
+				std::bind(&Device::switchOff_DataAcquisition, this),
+				std::bind(&Device::start_DataAcquisition, this),
+				std::bind(&Device::stop_DataAcquisition, this),
+				std::bind(&Device::recover_DataAcquisition, this),
+				std::bind(&Device::allow_DataAcquisition_Change, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),
+				std::bind(&Device::PV_DataAcquisition_Gain_Writer,this, std::placeholders::_1, std::placeholders::_2),
+				std::bind(&Device::PV_DataAcquisition_Offset_Writer,this, std::placeholders::_1, std::placeholders::_2),
+				std::bind(&Device::PV_DataAcquisition_Bandwidth_Writer,this, std::placeholders::_1, std::placeholders::_2),
+				std::bind(&Device::PV_DataAcquisition_Resolution_Writer,this, std::placeholders::_1, std::placeholders::_2),
+				std::bind(&Device::PV_DataAcquisition_Impedance_Writer,this,  std::placeholders::_1, std::placeholders::_2),
+				std::bind(&Device::PV_DataAcquisition_Coupling_Writer,this,   std::placeholders::_1, std::placeholders::_2),
+				std::bind(&Device::PV_DataAcquisition_SignalRefType_Writer,this,  std::placeholders::_1, std::placeholders::_2),
+				std::bind(&Device::PV_DataAcquisition_Ground_Writer,this, std::placeholders::_1, std::placeholders::_2),
+				std::bind(&Device::PV_DataAcquisition_DMAEnable_Writer,this,std::placeholders:: _1,std::placeholders::_2),
+				std::bind(&Device::PV_DataAcquisition_SamplingRate_Writer,this,std::placeholders::_1,std::placeholders::_2)
+		);
+		//Set optional methods
+		handlerDAQ.PV_Gain_Initializer = std::bind(&Device::PV_DataAcquisition_Gain_Initializer, this, std::placeholders::_1, std::placeholders::_2);
+		handlerDAQ.PV_Offset_Initializer = std::bind(&Device::PV_DataAcquisition_Offset_Initializer, this, std::placeholders::_1, std::placeholders::_2);
+		handlerDAQ.PV_Bandwidth_Initializer = std::bind(&Device::PV_DataAcquisition_Bandwidth_Initializer, this, std::placeholders::_1, std::placeholders::_2);
+		handlerDAQ.PV_Resolution_Initializer = std::bind(&Device::PV_DataAcquisition_Resolution_Initializer, this, std::placeholders::_1, std::placeholders::_2);
+
+		handlerDAQ.PV_Impedance_Initializer = std::bind(&Device::PV_DataAcquisition_Impedance_Initializer, this, std::placeholders::_1, std::placeholders::_2);
+		handlerDAQ.PV_Coupling_Initializer = std::bind(&Device::PV_DataAcquisition_Coupling_Initializer, this, std::placeholders::_1, std::placeholders::_2);
+		handlerDAQ.PV_SignalRefType_Initializer = std::bind(&Device::PV_DataAcquisition_SignalRefType_Initializer, this, std::placeholders::_1, std::placeholders::_2);
+		handlerDAQ.PV_Ground_Initializer = std::bind(&Device::PV_DataAcquisition_Ground_Initializer, this, std::placeholders::_1, std::placeholders::_2);
+		handlerDAQ.PV_DMAEnable_Initializer = std::bind(&Device::PV_DataAcquisition_DMAEnable_Initializer, this, std::placeholders::_1, std::placeholders::_2);
+		handlerDAQ.PV_SamplingRate_Initializer = std::bind(&Device::PV_DataAcquisition_SamplingRate_Initializer, this, std::placeholders::_1, std::placeholders::_2);
+		//Set init values
+		handlerDAQ.m_Decimation_Init = 1;
+		handlerDAQ.m_DecimationType_Init = 2;
+		m_DataAcquisition = rootNode.addChild(nds::DataAcquisition<std::vector<double>>(
+				"DataAcquisitionNode",
+				128,
+				handlerDAQ));
+		
+		@endcode
+		
+		-# In case the user does not set the INIT parameter, we will create the DataAcquisition node using the regular constructor. The constructor requires passing it the methods that will be executed on the different transitions between the states and the methods that will be executed by the delegate PVs.
+		@code
+		m_DataAcquisition=rootNode.addChild(nds::DataAcquisition<std::vector<double>>
+			("DataAcquisitionNode",
+					128,
+				std::bind(&Device::switchOn_DataAcquisition, this),
+					std::bind(&Device::switchOff_DataAcquisition,this),
+					std::bind(&Device::start_DataAcquisition,this),
+					std::bind(&Device::stop_DataAcquisition,this),
+					std::bind(&Device::recover_DataAcquisition,this),
+					std::bind(&Device::allow_DataAcquisition_Change,this,std::placeholders::_1,std::placeholders::_2,std::placeholders::_3),
+					std::bind(&Device::PV_DataAcquisition_Gain_Writer,this,std::placeholders::_1,std::placeholders::_2),
+					std::bind(&Device::PV_DataAcquisition_Offset_Writer,this,std::placeholders::_1,std::placeholders::_2),
+					std::bind(&Device::PV_DataAcquisition_Bandwidth_Writer,this,std::placeholders::_1,std::placeholders::_2),
+					std::bind(&Device::PV_DataAcquisition_Resolution_Writer,this,std::placeholders::_1,std::placeholders::_2),
+					std::bind(&Device::PV_DataAcquisition_Impedance_Writer,this,std::placeholders::_1,std::placeholders::_2),
+					std::bind(&Device::PV_DataAcquisition_Coupling_Writer,this,std::placeholders::_1,std::placeholders::_2),
+					std::bind(&Device::PV_DataAcquisition_SignalRefType_Writer,this,std::placeholders::_1,std::placeholders::_2),
+					std::bind(&Device::PV_DataAcquisition_Ground_Writer,this,std::placeholders::_1,std::placeholders::_2),
+					std::bind(&Device::PV_DataAcquisition_DMAEnable_Writer,this,std::placeholders:: _1,std::placeholders::_2),
+					std::bind(&Device::PV_DataAcquisition_SamplingRate_Writer,this,std::placeholders::_1,std::placeholders::_2)
+			));
+		}
+		
+		@endcode
+	
+	-# DAQ node STM functionality
+		-# The user needs to implement the methods for supporting the desired behaviour of the data acquisition state machine.  In the transition to the ON state the user has to guarantee the execution of all steps required by the hardware device through its API to put the device in a well-known state.
+		@code
+		/*
+		 * DataAcquisition State Machine
+		 */
+		
+		// Called when the DataAcquisition node has to be switched on.
+		void Device::switchOn_DataAcquisition(){
+		
+		}
+		
+		// Called when the DataAcquisition node has to be switched off.
+		void Device::switchOff_DataAcquisition(){
+		
+		}
+		@endcode
+		-# In the transition from ON to Running state the start_DataAcquisition() method is executed. Here we are adding an example of how to launch a thread.
+		@code
+		/**
+		 * Called when the DataAcquisition node has to start acquiring. We
+		 * start the data acquisition thread.
+		 */
+		
+		void Device::start_DataAcquisition(){
+		
+			m_bStop_DataAcquisition = false; //< We will set to true to stop the acquisition thread
+			/**
+			 *   Start the acquisition thread.
+			 *   We don't need to check if the thread was already started
+			 *   because the state machine guarantees that the start
+			 *   handler is called only while the state is ON.
+			 */
+			m_DataAcquisition_Thread = std::thread(std::bind(&Device::DataAcquisition_thread_body, this));
+		}
+		@endcode
+		
+		-# In the transition from Running to ON the method stop_DataAcquisition() is executed. 
+		@code
+		void Device::stop_DataAcquisition(){
+			m_bStop_DataAcquisition = true;
+			m_DataAcquisition_Thread.join();
+		}
+		
+		/**
+		 * A failure during a state transition will cause the state
+		 * machine to switch to the failure state. For now we don't plan
+		 * for this and every time the state machine wants to recover we
+		 * throw StateMachineRollBack to force the state machine to stay
+		 * on the failure state.
+		 */
+		void Device::recover_DataAcquisition(){
+		    throw nds::StateMachineRollBack("Cannot recover");
+		}
+		@endcode
+		
+		-# Special mention requires the method allow_DataAcquition_Change(). In this example the methods returns a true allowing the transitions. In a real device driver the user has to evaluate the conditions and check possible errors before allowing a transition.
+		@code
+		/**
+		 * We always allow the state machine to switch state. Before
+		 * calling this function the state machine has already verified
+		 * that the requested state transition is legal.
+		 */
+		
+		bool Device::allow_DataAcquisition_Change(const nds::state_t, const nds::state_t, const nds::state_t){
+			return true;
+		}
+		@endcode
+	-# Using DAQ node setters
+		-# An example for the data acquisition setters: this method sets the GAIN and the GAIN readback PV by calling the @ref nds::DataAcquisition::setGain "setGain()" method.
+		@code
+		/*
+		 * DataAcquisition setters
+		 */
+		void Device::PV_DataAcquisition_Gain_Writer(const timespec& timestamp, const double& value){
+			double HW_value;
+		     /**
+		      * Value has the Gain to be programmed on the hardware.
+		      * Call to function programming the hardware. This function
+		      * should return the real Gain programmed. This value has to
+		      * be set to the readback attribute.
+		      * In the meantime, without real hardware value and HW_value
+		      * are equal.
+		      */
+			HW_value=value;
+			m_DataAcquisition.setGain(timestamp,HW_value);
+		}
+		@endcode
+	-# Data Acquisition thread
+		-# An example of a thread body function: this thread reads some parameter values and the number of samples per pushed block, generates some samples and pushes them to the control system.
+		@code
+		void Device::DataAcquisition_thread_body() {
+			/**
+			 * Let's allocate a vector that will contain the data that we
+			 * will push to the control system or to the data acquisition
+			 * node*/
+			std::vector<double> outputData(m_DataAcquisition.getMaxElements(),0);
+			size_t nElm = m_DataAcquisition.getMaxElements();
+			double counter(0);
+		
+			//Counter for number of pushed data blocks
+			std::int32_t NumberOfPushedDataBlocks(0);
+		
+			// Get Gain
+			double Gain = m_DataAcquisition.getGain();
+			// Get Bandwidth
+			double Bandwidth = m_DataAcquisition.getBandwidth();
+			// Get Resolution
+			double Resolution = m_DataAcquisition.getResolution();
+			// Get Coupling
+			double Coupling = m_DataAcquisition.getCoupling();
+			// Get SignalRefType
+			double SignalRefTYpe = m_DataAcquisition.getSignalRefType();
+			// Get Ground
+			double Ground = m_DataAcquisition.getGround();
+			// Get offset
+			double Offset = m_DataAcquisition.getOffset();
+			// Get impedance
+			std::int32_t Impedance = m_DataAcquisition.getImpedance();
+			// Get SamplingRate
+			double SamplingRate = m_DataAcquisition.getSamplingRate();
+		
+			std::cout<<"\tGain = "<< Gain<<std::endl;
+			std::cout<<"\tBandwidth = "<<Bandwidth<<std::endl;
+			std::cout<<"\tResolution = "<<Resolution<<std::endl;
+			std::cout<<"\tCoupling = "<<Coupling<<std::endl;
+			std::cout<<"\tSignalRefType = "<<SignalRefTYpe<<std::endl;
+			std::cout<<"\tGround = "<<Ground<<std::endl;
+			std::cout<<"\tOffset = "<<Offset<<std::endl;
+			std::cout<<"\tImpedance = "<<Impedance<<std::endl;
+			std::cout<<"\tSamplingRate = "<<SamplingRate<<std::endl;
+			// Run until the state machine stops us
+			while(!m_bStop_DataAcquisition){
+		
+				outputData.clear();
+				outputData.resize(nElm,counter);
+				++counter;
+		
+				// Push the vector to the control system
+				m_DataAcquisition.push(m_DataAcquisition.getTimestamp(), outputData);
+				++NumberOfPushedDataBlocks;
+				// Rest for a while
+				::usleep(100000);
+			}
+			m_DataAcquisition.setNumberOfPushedDataBlocks(m_DataAcquisition.getTimestamp(),NumberOfPushedDataBlocks);
+		}
+		@endcode
+		@attention
+		Instead of the example code that generates data, a real driver must call the HW API to read data directly from HW and assign this data to the output vector.
+		
+	-# Initializing the NDS device
+		-# Once all nodes and PVs are declared in the constructor of our example device, they must be registered in the control system that calls this constructor. This will establish all the required data structures and start the communication between the device and the control system. The initialization is performed by:
+		@code
+		rootNode.initialize(this, factory);
+		@endcode
+	-# Device destructor
+		-# The destructor, in this case, does not need to do anything, however, in the case of, for example, memory allocation it may be necessary to deallocate in the destructor depending of how it is implemented. The general practice is to free all the resources allocated.
+		
+		
+@subsection getting_started_example_NDS_driver_testing Testing the Device Driver
+@note
+Test available at "src/test/nds-example"
+
+@subsubsection getting_started_example_NDS_driver_testing_main main.cpp
+@code
+#include <gtest/gtest.h>
+#include <nds3/nds.h>
+#include "nds-example.h"
+#include "nds3/ndsTestFactory.h"
+
+int main(int argc, char **argv)
+{ 
+
+nds::Factory::registerDriver("Device", std::bind(&Device::allocateDevice, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3), std::bind(&Device::deallocateDevice, std::placeholders::_1));
+
+nds::Factory testControlSystem(std::shared_ptr<nds::FactoryBaseImpl>(new nds::tests::TestControlSystemFactoryImpl())); 
+
+nds::Factory::registerControlSystem(testControlSystem);   ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
+@endcode
+The nds::Factory::registerDriver() method is registering the Device Driver in NDS with the name "Device". The parameters set are the functions implemented to allocate and deallocate the driver. Once the driver has been registered, NDS is configured to use the implementation of the control system using the nds::Factory::registerControlSystem() method. testControlSystem's class is nds::Factory (available in the nds3-testcontrolsystem library), and the public methods are available in the @ref ndsTestInterface.h header file.
+Finally, the Google test environment is initialized and the tests are run.
+
+@subsubsection getting_started_example_NDS_driver_testing_testDeviceAllocation testDeviceAllocation.cpp
+This file contains an example of a google test with device driver instantiation. You can create in other cpp files as many tests as you need.
+@code
+#include <gtest/gtest.h>
+#include <nds3/nds.h>
+#include "nds-example.h"
+#include <nds3/ndsTestFactory.h>
+
+TEST(testDeviceAllocation, testAllocationMissingDevice)
+{
+    //first we create the factory
+    nds::Factory factory("test");
+    factory.createDevice("Device", "rootNode", nds::namedParameters_t());
+    EXPECT_NE((void*)0, Device::getInstance("rootNode"));
+    factory.destroyDevice("rootNode");
+}
+@endcode
+
+@subsubsection getting_started_example_NDS_driver_testing_methodsTCS Methods available in the Test Control System
+Using the interface with the test control system, the Device Driver developer can read and write PVs and manage the nodes. 
+@code
+template<typename T>
+void TestControlSystemInterfaceImpl::readCSValue(const 
+std::string& pvName, timespec* pTimestamp, T* pValue)
+@endcode
+Using the previously obtained interface, the operation to read a PV is done with the following sequence. You need to provide the identification of the PV that you want to read. This name is always the rootNode name, plus the name of the hierarchy nodes up to the desired PV. The call returns the timestamp and the PV value.
+@code
+void readCSValue(const std::string& pvName, timespec* pTimestamp, T* pValue);
+@endcode
+A similar function exists to write a PV, called writeCSValue.
+The NDS Device Driver can update the input process variables in the control system asynchronously. This asynchronous update is implemented in the NDS Device Driver with functions that "push" values. The function that allows to the user of the control system to read these values is called getPushed<T>. It is available for all data types and it also provides a timeout.
+In the case of reading an int32, the function is:
+@code
+void getPushedInt32(const std::string& pvName, const timespec*& pTime, const int32_t*& pValue, const std::uint32_t& timeoutMs=1000);
+@endcode
+
+
+
+
 
 
 */

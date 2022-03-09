@@ -1,7 +1,9 @@
 #include <functional>
 #include <sstream>
 #include <math.h>
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 
 #include <nds3/nds.h>
 
@@ -73,6 +75,26 @@ public:
      * @return
      */
     bool allowChange(const nds::state_t, const nds::state_t, const nds::state_t);
+    void PV_DataAcquisition_Gain_Writer(const timespec& timestamp, const double& value) {
+    }
+    void PV_DataAcquisition_Offset_Writer(const timespec& timestamp, const double& value) {
+    }
+    void PV_DataAcquisition_Bandwidth_Writer(const timespec& timestamp, const double& value) {
+    }
+    void PV_DataAcquisition_Resolution_Writer(const timespec& timestamp, const double& value) {
+    }
+    void PV_DataAcquisition_Impedance_Writer(const timespec& timestamp, const double& value) {
+    }
+    void PV_DataAcquisition_Coupling_Writer(const timespec& timestamp, const std::int32_t& value) {
+    }
+    void PV_DataAcquisition_SignalRefType_Writer(const timespec& timestamp, const std::int32_t& value) {
+    }
+    void PV_DataAcquisition_Ground_Writer(const timespec& timestamp, const std::int32_t& value) {
+    }
+    void PV_DataAcquisition_DMAEnable_Writer(const timespec& timestamp, const std::int32_t& value) {
+    }
+    void PV_DataAcquisition_SamplingRate_Writer(const timespec& timestamp, const double& value) {
+    }
 
     /**
      * @brief Loop that performs the data acquisition.
@@ -144,16 +166,24 @@ Channel::Channel(const std::string &name, nds::Node &parentNode)
     // We create an acquisition node with the requested name...
     ////////////////////////////////////////////////////////////////////////////////
     m_acquisition = nds::DataAcquisition<std::vector<std::int32_t> >("Acquisition",
-                                                                     100,
-                                                                     std::bind(&Channel::switchOn, this),
-                                                                     std::bind(&Channel::switchOff, this),
-                                                                     std::bind(&Channel::start, this),
-                                                                     std::bind(&Channel::stop, this),
-                                                                     std::bind(&Channel::recover, this),
-                                                                     std::bind(&Channel::allowChange, this,
-                                                                               std::placeholders::_1,
-                                                                               std::placeholders::_2,
-                                                                               std::placeholders::_3));
+        100,
+        std::bind(&Channel::switchOn, this),
+        std::bind(&Channel::switchOff, this),
+        std::bind(&Channel::start, this),
+        std::bind(&Channel::stop, this),
+        std::bind(&Channel::recover, this),
+        std::bind(&Channel::allowChange, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),
+        std::bind(&Channel::PV_DataAcquisition_Gain_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Channel::PV_DataAcquisition_Offset_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Channel::PV_DataAcquisition_Bandwidth_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Channel::PV_DataAcquisition_Resolution_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Channel::PV_DataAcquisition_Impedance_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Channel::PV_DataAcquisition_Coupling_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Channel::PV_DataAcquisition_SignalRefType_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Channel::PV_DataAcquisition_Ground_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Channel::PV_DataAcquisition_DMAEnable_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Channel::PV_DataAcquisition_SamplingRate_Writer, this, std::placeholders::_1, std::placeholders::_2)
+    );
 
     // ...and we add it to the root
     ////////////////////////////////////////////////////////////////////////////////
@@ -273,7 +303,7 @@ void Channel::acquisitionLoop()
         size_t maxAmplitude = m_amplitude.getValue(); // PVVariables are thread safe
         for(size_t scanVector(0); scanVector != outputData.size(); ++scanVector)
         {
-            outputData[scanVector] = (double)maxAmplitude * sin((double)(angle++) / 10.0f);
+            outputData[scanVector] = std::int32_t((double)maxAmplitude * sin((double)(angle++) / 10.0f));
         }
 
         // Push the vector to the control system

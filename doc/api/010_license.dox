@@ -1,11 +1,9 @@
+
 /**
 
 @page license License
 
-@verbatim
 
-$license$
-
-@endverbatim
+@include{doc} "../../../../license.txt"
 
 */

@@ -10,8 +10,10 @@
 #include <memory>
 #include <mutex>
 #include <sstream>
+#include <iostream>
 
 #include "nds3/definitions.h"
+#include "nds3/exceptions.h"
 #include "nds3/impl/nodeImpl.h"
 #include "nds3/impl/stateMachineImpl.h"
 #include "nds3/impl/factoryBaseImpl.h"
@@ -118,6 +120,35 @@ void NodeImpl::getGlobalState(timespec* pTimestamp, state_t* pState) const
     }
     m_pStateMachine->getGlobalState(pTimestamp, pState);
 }
+void NodeImpl::getLowestGlobalState(timespec* pTimestamp, state_t* pState) const
+{
+    if(m_pStateMachine.get() == 0)
+    {
+        getLowestChildrenState(pTimestamp,pState, m_nodeLevel);
+        return;
+    }
+    m_pStateMachine->getLowestGlobalState(pTimestamp, pState);
+}
+
+void NodeImpl::getHighestGlobalState(timespec* pTimestamp, state_t* pState) const
+{
+    if(m_pStateMachine.get() == 0)
+    {
+        getHighestChildrenState(pTimestamp, pState, m_nodeLevel);
+        return;
+    }
+    m_pStateMachine->getHighestGlobalState(pTimestamp, pState);
+}
+
+void NodeImpl::getLowestChildState(timespec* pTimestamp, state_t* pState) const
+{
+    getLowestChildrenState(pTimestamp,pState, m_nodeLevel);
+}
+
+void NodeImpl::getHighestChildState(timespec* pTimestamp, state_t* pState) const
+{
+    getHighestChildrenState(pTimestamp, pState, m_nodeLevel);
+}
 
 void NodeImpl::getChildrenState(timespec* pTimestamp, state_t* pState) const
 {
@@ -127,7 +158,7 @@ void NodeImpl::getChildrenState(timespec* pTimestamp, state_t* pState) const
         if(scanChildren->second.get() != m_pStateMachine.get())
         {
             std::shared_ptr<NodeImpl> child = std::dynamic_pointer_cast<NodeImpl>(scanChildren->second);
-            if(child.get() != 0)
+            if(child.get() != 0 && child->m_pStateMachine.get()!=0)
             {
                 timespec childTimestamp;
                 state_t childState;
@@ -146,6 +177,138 @@ void NodeImpl::getChildrenState(timespec* pTimestamp, state_t* pState) const
         }
     }
 }
+
+void NodeImpl::getLowestChildrenState(timespec* pTimestamp, state_t* pState, uint32_t nodeLevel) const
+{
+    *pState = state_t::MAX_STATE_NUM;
+    state_t childState = state_t::MAX_STATE_NUM;
+    //Iterates the map of all its children.
+    for(tChildren::const_iterator scanChildren(m_children.begin()), endScan(m_children.end()); scanChildren != endScan; ++scanChildren)
+    {
+        //Excluding the STM because addChild method adds the STM as another child
+        if(scanChildren->second.get() != m_pStateMachine.get())
+        {
+            std::shared_ptr<NodeImpl> child = std::dynamic_pointer_cast<NodeImpl>(scanChildren->second);
+            if(child.get() != 0)
+            {
+                timespec timestamp;
+                child->getLowestChildrenState(&timestamp, &childState, nodeLevel);
+                //If the child doesn't have children, this function returns state_t::unknown
+            }
+        }else{
+            if(m_nodeLevel>(nodeLevel)){
+                std::shared_ptr<NodeImpl> child = std::dynamic_pointer_cast<NodeImpl>(scanChildren->second);
+                if(child.get() != 0)
+                {
+                    childState = child->getLocalState();
+                }
+            }
+        }
+        if(((int)*pState >= (int)childState))
+        {
+            *pTimestamp = getTimestamp();
+            *pState = childState;
+        }
+    }
+}
+
+void NodeImpl::getHighestChildrenState(timespec* pTimestamp, state_t* pState, uint32_t nodeLevel) const
+{
+    *pState = state_t::unknown;
+    state_t childState = state_t::unknown;
+    //Iterates the map of all its children.
+    for(tChildren::const_iterator scanChildren(m_children.begin()), endScan(m_children.end()); scanChildren != endScan; ++scanChildren)
+    {
+        //Excluding the STM because addChild method adds the STM as another child
+        if(scanChildren->second.get() != m_pStateMachine.get())
+        {
+            std::shared_ptr<NodeImpl> child = std::dynamic_pointer_cast<NodeImpl>(scanChildren->second);
+            if(child.get() != 0)
+            {
+                timespec timestamp;
+                child->getHighestChildrenState(&timestamp, &childState, nodeLevel);
+                //If the child doesn't have children, this function returns state_t::unknown
+            }
+        }else{
+            if(m_nodeLevel>(nodeLevel)){
+                std::shared_ptr<NodeImpl> child = std::dynamic_pointer_cast<NodeImpl>(scanChildren->second);
+                if(child.get() != 0)
+                {
+                    childState = child->getLocalState();
+                }
+            }
+        }
+        if(((int)*pState <= (int)childState))
+        {
+            *pTimestamp = getTimestamp();
+            *pState = childState;
+        }
+    }
+}
+
+bool nds::NodeImpl::setChildrenState(timespec /*pTimestamp*/, state_t futureState) {
+
+    bool error=false;
+    std::map<std::string,state_t> prevChildStatus;
+    for(tChildren::const_iterator scanChildren(m_children.begin()), endScan(m_children.end()); scanChildren != endScan; ++scanChildren)
+    {
+        if(scanChildren->second.get() != m_pStateMachine.get())
+        {
+            std::shared_ptr<NodeImpl> child = std::dynamic_pointer_cast<NodeImpl>(scanChildren->second);
+            if(child.get() != 0)
+            {
+                if(child->getAutoEnable()>=(autoEnable_t)futureState){
+                    prevChildStatus.insert(std::pair<std::string,state_t>(child->getFullNameFromPort(),child->getLocalState()));
+                    //Only execute child transition if autoEnable state is greater or equal to futureState
+                    try{
+                        child->setLocalState(futureState);
+                    }catch(nds::StateMachineError& e){
+                        error=true;
+                        break; //Break the for
+                    }
+                    //Not considered the asynchronous thread executing the transition
+//                  if(child->getLocalState()!=futureState){
+//                      error=true;
+//                      break; //Break the for
+//                  }
+                }
+            }
+        }
+    }//end for
+
+    //If error==true, we revert all children to the previous state
+    if(error){
+        std::map<std::string,state_t>::iterator scanPrevChildren;
+        for(tChildren::const_iterator scanChildren(m_children.begin()), endScan(m_children.end()); scanChildren != endScan; ++scanChildren)
+        {
+            if(scanChildren->second.get() != m_pStateMachine.get())
+            {
+                std::shared_ptr<NodeImpl> child = std::dynamic_pointer_cast<NodeImpl>(scanChildren->second);
+                if(child.get() != 0)
+                {
+                    scanPrevChildren = prevChildStatus.find(child->getFullNameFromPort());
+                    if(scanPrevChildren!= prevChildStatus.end()){
+                        child->setLocalState(scanPrevChildren->second);
+                    }
+                }
+            }
+        }
+    }
+    return error;
+
+}
+
+void nds::NodeImpl::setLocalState(state_t pState) {
+    m_pStateMachine->setState(pState);
+}
+
+autoEnable_t nds::NodeImpl::getAutoEnable() {
+    if(m_pStateMachine.get()==0){
+        return autoEnable_t::none;
+    }
+    return m_pStateMachine->getAutoEnable();
+}
+
 
 void NodeImpl::setLogLevel(const logLevel_t logLevel)
 {
@@ -220,3 +383,5 @@ std::string NodeImpl::buildFullExternalName(const FactoryBaseImpl& controlSystem
 
 
 }
+
+
