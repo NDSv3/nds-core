@@ -140,6 +140,7 @@ void Timing::setState(const nds::state_t& newState)
 {
     std::static_pointer_cast<TimingImpl>(m_pImplementation)->setState(newState);
 }
+} //namespace nds
 
 #ifdef _MSC_VER
 // https://github.com/esa/pykep/issues/47
@@ -153,7 +154,6 @@ int clock_gettime(int, struct timespec *spec)
     return 0;
 }
 #endif
-}
 
 #ifdef _WIN32
 void usleep(int microsecs)

@@ -273,11 +273,12 @@ class NDS3_API Timing: public Node  {
    void setState(const nds::state_t& newState);
 };
 
+} // namespace nds
+
 #ifdef _MSC_VER
 #define CLOCK_REALTIME 0
 int NDS3_API clock_gettime(int, struct timespec *spec);
 #endif
-}
 
 #ifdef _WIN32
 void NDS3_API usleep(int microsecs);
