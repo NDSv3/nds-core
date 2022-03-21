@@ -23,10 +23,14 @@ NDS_PATH=$PWD
 
 if [ "$TARG_ARCH" == "x86_64-w64-mingw32" ]; then
     # see https://github.com/randombit/botan/issues/2039
+    apt-get install -y g++-mingw-w64-x86-64
     update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
     # CROSS_COMPILE used by dlfcn-win32/tools/ci-build.sh
     export CROSS_COMPILE=$TARG_ARCH
     TOOLCHAIN_FILE=$NDS_PATH/CMake/TC-mingw64.cmake
+    if [ ! -d ./dlfcn-win32 ]; then
+        git clone https://github.com/dlfcn-win32/dlfcn-win32
+    fi
     if [ ! -d ./dlfcn-win32/ci-build-shared-x86_64-w64-mingw32 ]; then
         pushd ./dlfcn-win32
         chmod +x ./tools/ci-build.sh
@@ -34,10 +38,14 @@ if [ "$TARG_ARCH" == "x86_64-w64-mingw32" ]; then
         popd
     fi
 elif [ "$TARG_ARCH" == "i686-w64-mingw32" ]; then
+    apt-get install -y g++-mingw-w64-i686
     # see https://github.com/randombit/botan/issues/2039
     update-alternatives --set i686-w64-mingw32-g++ /usr/bin/i686-w64-mingw32-g++-posix
     export CROSS_COMPILE=$TARG_ARCH
     TOOLCHAIN_FILE=$NDS_PATH/CMake/TC-mingw32.cmake
+    if [ ! -d ./dlfcn-win32 ]; then
+        git clone https://github.com/dlfcn-win32/dlfcn-win32
+    fi
     if [ ! -d ./dlfcn-win32/ci-build-shared-i686-w64-mingw32 ]; then
         pushd ./dlfcn-win32
         chmod +x ./tools/ci-build.sh
