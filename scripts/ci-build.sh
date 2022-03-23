@@ -30,6 +30,8 @@ if [ "$TARG_ARCH" == "x86_64-w64-mingw32" ]; then
     TOOLCHAIN_FILE=$NDS_PATH/CMake/TC-mingw64.cmake
     if [ ! -d ./dlfcn-win32 ]; then
         git clone https://github.com/dlfcn-win32/dlfcn-win32
+        # Don't want to run the tests as WINE isn't installed
+        sed -i '/-DBUILD_TESTS=1/c\-DBUILD_TESTS=0' ./dlfcn-win32/tools/ci-build.sh
     fi
     if [ ! -d ./dlfcn-win32/ci-build-shared-x86_64-w64-mingw32 ]; then
         pushd ./dlfcn-win32
@@ -45,6 +47,8 @@ elif [ "$TARG_ARCH" == "i686-w64-mingw32" ]; then
     TOOLCHAIN_FILE=$NDS_PATH/CMake/TC-mingw32.cmake
     if [ ! -d ./dlfcn-win32 ]; then
         git clone https://github.com/dlfcn-win32/dlfcn-win32
+        # Don't want to run the tests as WINE isn't installed
+        sed -i '/-DBUILD_TESTS=1/c\-DBUILD_TESTS=0' ./dlfcn-win32/tools/ci-build.sh
     fi
     if [ ! -d ./dlfcn-win32/ci-build-shared-i686-w64-mingw32 ]; then
         pushd ./dlfcn-win32
