@@ -42,6 +42,16 @@ void PVBase::setEnumeration(const enumerationStrings_t &enumerations)
     std::static_pointer_cast<PVBaseImpl>(m_pImplementation)->setEnumeration(enumerations);
 }
 
+/*
+ * Specifies if the PV has to be processed during the device initialization
+ *
+ **************************************************************************/
+void PVBase::processAtInit(const bool bProcessAtInit)
+{
+    std::static_pointer_cast<PVBaseImpl>(m_pImplementation)->processAtInit(bProcessAtInit);
+}
+
+
 
 /*
  * Set the description
@@ -80,15 +90,6 @@ void PVBase::setScanType(const scanType_t scanType, const double periodSeconds)
 void PVBase::setMaxElements(const size_t maxElements)
 {
     std::static_pointer_cast<PVBaseImpl>(m_pImplementation)->setMaxElements(maxElements);
-}
-
-/*
- * SSpecifies if the PV has to be processed during the device initialization
- *
- ****************************************************************************/
-void PVBase::processAtInit(const bool bProcessAtInit)
-{
-    std::static_pointer_cast<PVBaseImpl>(m_pImplementation)->processAtInit(bProcessAtInit);
 }
 
 }

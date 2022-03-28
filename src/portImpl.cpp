@@ -71,17 +71,33 @@ void PortImpl::deregisterPV(std::shared_ptr<PVBaseImpl> pv)
     m_pInterface->deregisterPV(pv);
 }
 
-template<typename T>
-void PortImpl::push(std::shared_ptr<PVBaseImpl> pv, const timespec& timestamp, const T& value)
-{
-    m_pInterface->push(*(pv.get()), timestamp, value);
+void PortImpl::registerReporter(reporter_t reporter){
+  m_pInterface->registerReporter(reporter);
 }
 
-template void PortImpl::push<std::int32_t>(std::shared_ptr<PVBaseImpl>, const timespec&, const std::int32_t&);
-template void PortImpl::push<double>(std::shared_ptr<PVBaseImpl>, const timespec&, const double&);
-template void PortImpl::push<std::vector<std::int8_t> >(std::shared_ptr<PVBaseImpl>, const timespec&, const std::vector<std::int8_t>&);
-template void PortImpl::push<std::vector<std::uint8_t> >(std::shared_ptr<PVBaseImpl>, const timespec&, const std::vector<std::uint8_t>&);
-template void PortImpl::push<std::vector<std::int32_t> >(std::shared_ptr<PVBaseImpl>, const timespec&, const std::vector<std::int32_t>&);
-template void PortImpl::push<std::vector<double> >(std::shared_ptr<PVBaseImpl>, const timespec&, const std::vector<double>&);
-template void PortImpl::push<std::string >(std::shared_ptr<PVBaseImpl>, const timespec&, const std::string&);
+template<typename T>
+void PortImpl::push(std::shared_ptr<PVBaseImpl> pv, const timespec& timestamp, const T& value, const statusPV_t& status)
+{
+    m_pInterface->push(*(pv.get()), timestamp, value, status);
+}
+
+template void PortImpl::push<std::int32_t>(std::shared_ptr<PVBaseImpl>, const timespec&, const std::int32_t&, const statusPV_t&);
+template void PortImpl::push<std::int64_t>(std::shared_ptr<PVBaseImpl>, const timespec&, const std::int64_t&, const statusPV_t&);
+template void PortImpl::push<float>(std::shared_ptr<PVBaseImpl>, const timespec&, const float&, const statusPV_t&);
+template void PortImpl::push<double>(std::shared_ptr<PVBaseImpl>, const timespec&, const double&, const statusPV_t&);
+template void PortImpl::push<std::vector<bool> >(std::shared_ptr<PVBaseImpl>, const timespec&, const std::vector<bool>&, const statusPV_t&);
+template void PortImpl::push<std::vector<std::uint8_t> >(std::shared_ptr<PVBaseImpl>, const timespec&, const std::vector<std::uint8_t>&, const statusPV_t&);
+template void PortImpl::push<std::vector<std::uint16_t> >(std::shared_ptr<PVBaseImpl>, const timespec&, const std::vector<std::uint16_t>&, const statusPV_t&);
+template void PortImpl::push<std::vector<std::uint32_t> >(std::shared_ptr<PVBaseImpl>, const timespec&, const std::vector<std::uint32_t>&, const statusPV_t&);
+template void PortImpl::push<std::vector<std::int8_t> >(std::shared_ptr<PVBaseImpl>, const timespec&, const std::vector<std::int8_t>&, const statusPV_t&);
+template void PortImpl::push<std::vector<std::int16_t> >(std::shared_ptr<PVBaseImpl>, const timespec&, const std::vector<std::int16_t>&, const statusPV_t&);
+template void PortImpl::push<std::vector<std::int32_t> >(std::shared_ptr<PVBaseImpl>, const timespec&, const std::vector<std::int32_t>&, const statusPV_t&);
+template void PortImpl::push<std::vector<std::int64_t> >(std::shared_ptr<PVBaseImpl>, const timespec&, const std::vector<std::int64_t>&, const statusPV_t&);
+template void PortImpl::push<std::vector<float> >(std::shared_ptr<PVBaseImpl>, const timespec&, const std::vector<float>&, const statusPV_t&);
+template void PortImpl::push<std::vector<double> >(std::shared_ptr<PVBaseImpl>, const timespec&, const std::vector<double>&, const statusPV_t&);
+template void PortImpl::push<std::string >(std::shared_ptr<PVBaseImpl>, const timespec&, const std::string&, const statusPV_t&);
+template void PortImpl::push<timespec >(std::shared_ptr<PVBaseImpl>, const timespec&, const timespec&, const statusPV_t&);
+template void PortImpl::push<std::vector<timespec> >(std::shared_ptr<PVBaseImpl>, const timespec&, const std::vector<timespec>&, const statusPV_t&);
+template void PortImpl::push<timestamp_t>(std::shared_ptr<PVBaseImpl>, const timespec&, const timestamp_t&, const statusPV_t&);
+
 }

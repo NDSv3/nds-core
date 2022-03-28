@@ -1,6 +1,8 @@
 #include <functional>
 #include <math.h>
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 #include <iostream>
 #include <thread>
 
@@ -60,6 +62,27 @@ private:
     void startSquareWave();     ///< Called to start the data acquisition on the square wave node.
     void stopSquareWave();      ///< Called to stop the data acquisition on the square wave node.
     void recoverSquareWave();   ///< Called to recover the square wave node from a failure.
+
+    void PV_DataAcquisition_Gain_Writer(const timespec& timestamp, const double& value) {
+    }
+    void PV_DataAcquisition_Offset_Writer(const timespec& timestamp, const double& value) {
+    }
+    void PV_DataAcquisition_Bandwidth_Writer(const timespec& timestamp, const double& value) {
+    }
+    void PV_DataAcquisition_Resolution_Writer(const timespec& timestamp, const double& value) {
+    }
+    void PV_DataAcquisition_Impedance_Writer(const timespec& timestamp, const double& value) {
+    }
+    void PV_DataAcquisition_Coupling_Writer(const timespec& timestamp, const std::int32_t& value) {
+    }
+    void PV_DataAcquisition_SignalRefType_Writer(const timespec& timestamp, const std::int32_t& value) {
+    }
+    void PV_DataAcquisition_Ground_Writer(const timespec& timestamp, const std::int32_t& value) {
+    }
+    void PV_DataAcquisition_DMAEnable_Writer(const timespec& timestamp, const std::int32_t& value) {
+    }
+    void PV_DataAcquisition_SamplingRate_Writer(const timespec& timestamp, const double& value) {
+    }
 
     /**
      * @brief Called to verify if a state change is allowed
@@ -149,36 +172,48 @@ Oscilloscope::Oscilloscope(nds::Factory &factory, const std::string &deviceName,
     // This node is for the sinusoidal wave....
     ////////////////////////////////////////////////////////////////////////////////
     m_acquisitionSinWave = rootNode.addChild(nds::DataAcquisition<std::vector<std::int32_t> >(
-                                                 "SinWave",
-                                                 100,
-                                                 std::bind(&Oscilloscope::switchOnSinWave, this),
-                                                 std::bind(&Oscilloscope::switchOffSinWave, this),
-                                                 std::bind(&Oscilloscope::startSinWave, this),
-                                                 std::bind(&Oscilloscope::stopSinWave, this),
-                                                 std::bind(&Oscilloscope::recoverSinWave, this),
-                                                 std::bind(&Oscilloscope::allowChange,
-                                                           this,
-                                                           std::placeholders::_1,
-                                                           std::placeholders::_2,
-                                                           std::placeholders::_3)
-                                                 ));
+        "SinWave",
+        100,
+        std::bind(&Oscilloscope::switchOnSinWave, this),
+        std::bind(&Oscilloscope::switchOffSinWave, this),
+        std::bind(&Oscilloscope::startSinWave, this),
+        std::bind(&Oscilloscope::stopSinWave, this),
+        std::bind(&Oscilloscope::recoverSinWave, this),
+        std::bind(&Oscilloscope::allowChange, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),
+        std::bind(&Oscilloscope::PV_DataAcquisition_Gain_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Oscilloscope::PV_DataAcquisition_Offset_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Oscilloscope::PV_DataAcquisition_Bandwidth_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Oscilloscope::PV_DataAcquisition_Resolution_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Oscilloscope::PV_DataAcquisition_Impedance_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Oscilloscope::PV_DataAcquisition_Coupling_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Oscilloscope::PV_DataAcquisition_SignalRefType_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Oscilloscope::PV_DataAcquisition_Ground_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Oscilloscope::PV_DataAcquisition_DMAEnable_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Oscilloscope::PV_DataAcquisition_SamplingRate_Writer, this, std::placeholders::_1, std::placeholders::_2)
+    ));
 
     // ...and this node is for the square wave
     ////////////////////////////////////////////////////////////////////////////////
     m_acquisitionSquareWave = rootNode.addChild(nds::DataAcquisition<std::vector<std::int32_t> >(
-                                                    "SquareWave",
-                                                    100,
-                                                    std::bind(&Oscilloscope::switchOnSquareWave, this),
-                                                    std::bind(&Oscilloscope::switchOffSquareWave, this),
-                                                    std::bind(&Oscilloscope::startSquareWave, this),
-                                                    std::bind(&Oscilloscope::stopSquareWave, this),
-                                                    std::bind(&Oscilloscope::recoverSquareWave, this),
-                                                    std::bind(&Oscilloscope::allowChange,
-                                                              this,
-                                                              std::placeholders::_1,
-                                                              std::placeholders::_2,
-                                                              std::placeholders::_3)
-                                                    ));
+        "SquareWave",
+        100,
+        std::bind(&Oscilloscope::switchOnSquareWave, this),
+        std::bind(&Oscilloscope::switchOffSquareWave, this),
+        std::bind(&Oscilloscope::startSquareWave, this),
+        std::bind(&Oscilloscope::stopSquareWave, this),
+        std::bind(&Oscilloscope::recoverSquareWave, this),
+        std::bind(&Oscilloscope::allowChange, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),
+        std::bind(&Oscilloscope::PV_DataAcquisition_Gain_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Oscilloscope::PV_DataAcquisition_Offset_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Oscilloscope::PV_DataAcquisition_Bandwidth_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Oscilloscope::PV_DataAcquisition_Resolution_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Oscilloscope::PV_DataAcquisition_Impedance_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Oscilloscope::PV_DataAcquisition_Coupling_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Oscilloscope::PV_DataAcquisition_SignalRefType_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Oscilloscope::PV_DataAcquisition_Ground_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Oscilloscope::PV_DataAcquisition_DMAEnable_Writer, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&Oscilloscope::PV_DataAcquisition_SamplingRate_Writer, this, std::placeholders::_1, std::placeholders::_2)
+    ));
 
     // We have declared all the nodes and PVs in our device: now we register them
     //  with the control system that called this constructor.
@@ -365,7 +400,7 @@ void Oscilloscope::acquireSinusoidalWave()
         size_t maxAmplitude = m_sinWaveAmplitude.getValue(); // PVVariables are thread safe
         for(size_t scanVector(0); scanVector != outputData.size(); ++scanVector)
         {
-            outputData[scanVector] = (double)maxAmplitude * sin((double)(angle++) / 10.0f);
+            outputData[scanVector] = std::int32_t((double)maxAmplitude * sin((double)(angle++) / 10.0f));
         }
 
         // Push the vector to the control system
@@ -402,10 +437,10 @@ void Oscilloscope::acquireSquareWave()
     {
         // Fill the vector with a square wave
         ////////////////////////////////////////////////////////////////////////////////
-        size_t maxAmplitude = m_squareWaveAmplitude.getValue();
+        std::int32_t maxAmplitude = m_squareWaveAmplitude.getValue();
         for(size_t scanVector(0); scanVector != outputData.size(); ++scanVector)
         {
-            outputData[scanVector] = ((angle & 0xff) < 128) ? maxAmplitude : - maxAmplitude;
+            outputData[scanVector] = std::int32_t(((angle & 0xff) < 128) ? maxAmplitude : - maxAmplitude);
         }
 
         // Push the vector to the control system

@@ -3,46 +3,27 @@ namespace nds
 
 /**
 
-@example thermometer/thermometer.cpp
+@example ../examples/nds-example/nds-example.cpp
 
-This example shows a fictional thermometer.
-
-The Makefile for this sample is the following:
-@include thermometer/Makefile
-
-The code shows a simple delegate function that is called each time the control system wants to read the temperature.
-
-
-@example oscilloscope/oscilloscope.cpp
-
-This example shows a fictional oscilloscope with 2 channels: one channel acquires a sinusoidal
-wave while the other channel acquires a square wave.
+This is another example of how to create an NDS device driver including already defined NDS nodes.
 
 The Makefile for this sample is the following:
-@include oscilloscope/Makefile
-
-The code shows how to add two channels to a root node by using Node::addChild() and how
-to use the DataAcquisition node.
+@include "../examples/nds-example/Makefile"
 
 
 
-@example oscilloscopeMultiChannel/oscilloscopeMultiChannel.cpp
+@example ../examples/nodesTest/DeviceDBL.cpp
 
-This example shows a fictional multi-channel oscilloscope.
-When the acquisition is triggered on a channel then the channel pushes a sinusoidal wave
-to the control system.
-
-The example shows how to create the channels programmatically (useful when you have a large
-number of channel that offer the same functionality).
+Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
 
 The Makefile for the sample is the following:
-@include oscilloscopeMultiChannel/Makefile
+@include "../examples/nodesTest/Makefile"
 
 
-The macro NDS_DEFINE_DRIVER tells that the Oscilloscope class is the one that must be allocated and
-initialized when the control system wants to use our "Oscilloscope" device.
+The macro NDS_DEFINE_DRIVER tells that the DeviceDBL class is the one that must be allocated and
+initialized when the control system wants to use our "DeviceDBL" device.
 
-The constructor of our oscilloscope creates a root node for the device and names it using the parameter
+The constructor creates a root node for the device and names it using the parameter
 <b>device</b> passed by the control system. It is not mandatory to call the root node using the <b>device</b>
 parameter.
 
@@ -51,14 +32,362 @@ We could have declared the root node as a simple Node and each channel as a Port
 channel would keep an interface with the control system and all its callback would be executed
 on separate threads (one per channel).
 
-The Channel class is just a helper that add the acquisition nodes to the root one and keep few
-references to the channel's PVs and to the channel's acquisition node. For fewer number of channels
-we could have implemented this functionality directly in the Oscillocope class.
 
 
-@example rpcSquare/rpcSquare.cpp
 
-This example shows an PVAction node used for RPC-like functionality.
+@example ../examples/nodesTest/DeviceDigitalIO.cpp
+
+Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
+
+The Makefile for the sample is the following:
+@include "../examples/nodesTest/Makefile"
+
+
+The macro NDS_DEFINE_DRIVER tells that the DeviceDigitalIO class is the one that must be allocated and
+initialized when the control system wants to use our "DeviceDigitalIO" device.
+
+The constructor creates a root node for the device and names it using the parameter
+<b>device</b> passed by the control system. It is not mandatory to call the root node using the <b>device</b>
+parameter.
+
+The root node is declared as a Port: this means that it holds an interface with the control system.\n
+We could have declared the root node as a simple Node and each channel as a Port: in this case each
+channel would keep an interface with the control system and all its callback would be executed
+on separate threads (one per channel).
+
+
+
+@example ../examples/nodesTest/DeviceError.cpp
+
+Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
+
+The Makefile for the sample is the following:
+@include "../examples/nodesTest/Makefile"
+
+
+The macro NDS_DEFINE_DRIVER tells that the DeviceError class is the one that must be allocated and
+initialized when the control system wants to use our "DeviceError" device.
+
+The constructor creates a root node for the device and names it using the parameter
+<b>device</b> passed by the control system. It is not mandatory to call the root node using the <b>device</b>
+parameter.
+
+The root node is declared as a Port: this means that it holds an interface with the control system.\n
+We could have declared the root node as a simple Node and each channel as a Port: in this case each
+channel would keep an interface with the control system and all its callback would be executed
+on separate threads (one per channel).
+
+
+
+@example ../examples/nodesTest/DeviceFirmware.cpp
+
+Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
+
+The Makefile for the sample is the following:
+@include "../examples/nodesTest/Makefile"
+
+
+The macro NDS_DEFINE_DRIVER tells that the DeviceFirmware class is the one that must be allocated and
+initialized when the control system wants to use our "DeviceFirmware" device.
+
+The constructor creates a root node for the device and names it using the parameter
+<b>device</b> passed by the control system. It is not mandatory to call the root node using the <b>device</b>
+parameter.
+
+The root node is declared as a Port: this means that it holds an interface with the control system.\n
+We could have declared the root node as a simple Node and each channel as a Port: in this case each
+channel would keep an interface with the control system and all its callback would be executed
+on separate threads (one per channel).
+
+
+
+@example ../examples/nodesTest/DeviceFTE.cpp
+
+Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
+
+The Makefile for the sample is the following:
+@include "../examples/nodesTest/Makefile"
+
+
+The macro NDS_DEFINE_DRIVER tells that the DeviceFTE class is the one that must be allocated and
+initialized when the control system wants to use our "DeviceFTE" device.
+
+The constructor creates a root node for the device and names it using the parameter
+<b>device</b> passed by the control system. It is not mandatory to call the root node using the <b>device</b>
+parameter.
+
+The root node is declared as a Port: this means that it holds an interface with the control system.\n
+We could have declared the root node as a simple Node and each channel as a Port: in this case each
+channel would keep an interface with the control system and all its callback would be executed
+on separate threads (one per channel).
+
+
+
+@example ../examples/nodesTest/DeviceHQMonitor.cpp
+
+Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
+
+The Makefile for the sample is the following:
+@include "../examples/nodesTest/Makefile"
+
+
+The macro NDS_DEFINE_DRIVER tells that the DeviceHQMonitor class is the one that must be allocated and
+initialized when the control system wants to use our "DeviceHQMonitor" device.
+
+The constructor creates a root node for the device and names it using the parameter
+<b>device</b> passed by the control system. It is not mandatory to call the root node using the <b>device</b>
+parameter.
+
+The root node is declared as a Port: this means that it holds an interface with the control system.\n
+We could have declared the root node as a simple Node and each channel as a Port: in this case each
+channel would keep an interface with the control system and all its callback would be executed
+on separate threads (one per channel).
+
+
+
+
+@example ../examples/nodesTest/DeviceI32.cpp
+
+Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
+
+The Makefile for the sample is the following:
+@include "../examples/nodesTest/Makefile"
+
+
+The macro NDS_DEFINE_DRIVER tells that the DeviceI32 class is the one that must be allocated and
+initialized when the control system wants to use our "DeviceI32" device.
+
+The constructor creates a root node for the device and names it using the parameter
+<b>device</b> passed by the control system. It is not mandatory to call the root node using the <b>device</b>
+parameter.
+
+The root node is declared as a Port: this means that it holds an interface with the control system.\n
+We could have declared the root node as a simple Node and each channel as a Port: in this case each
+channel would keep an interface with the control system and all its callback would be executed
+on separate threads (one per channel).
+
+
+
+
+@example ../examples/nodesTest/DeviceI64.cpp
+
+Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
+
+The Makefile for the sample is the following:
+@include "../examples/nodesTest/Makefile"
+
+
+The macro NDS_DEFINE_DRIVER tells that the DeviceI64 class is the one that must be allocated and
+initialized when the control system wants to use our "DeviceI64" device.
+
+The constructor creates a root node for the device and names it using the parameter
+<b>device</b> passed by the control system. It is not mandatory to call the root node using the <b>device</b>
+parameter.
+
+The root node is declared as a Port: this means that it holds an interface with the control system.\n
+We could have declared the root node as a simple Node and each channel as a Port: in this case each
+channel would keep an interface with the control system and all its callback would be executed
+on separate threads (one per channel).
+
+
+
+
+@example ../examples/nodesTest/DeviceRouting.cpp
+
+Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
+
+The Makefile for the sample is the following:
+@include "../examples/nodesTest/Makefile"
+
+
+The macro NDS_DEFINE_DRIVER tells that the DeviceRouting class is the one that must be allocated and
+initialized when the control system wants to use our "DeviceRouting" device.
+
+The constructor creates a root node for the device and names it using the parameter
+<b>device</b> passed by the control system. It is not mandatory to call the root node using the <b>device</b>
+parameter.
+
+The root node is declared as a Port: this means that it holds an interface with the control system.\n
+We could have declared the root node as a simple Node and each channel as a Port: in this case each
+channel would keep an interface with the control system and all its callback would be executed
+on separate threads (one per channel).
+
+
+
+@example ../examples/nodesTest/DeviceStateMachine.cpp
+
+Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
+
+The Makefile for the sample is the following:
+@include "../examples/nodesTest/Makefile"
+
+
+The macro NDS_DEFINE_DRIVER tells that the DeviceStateMachine class is the one that must be allocated and
+initialized when the control system wants to use our "DeviceStateMachine" device.
+
+The constructor creates a root node for the device and names it using the parameter
+<b>device</b> passed by the control system. It is not mandatory to call the root node using the <b>device</b>
+parameter.
+
+The root node is declared as a Port: this means that it holds an interface with the control system.\n
+We could have declared the root node as a simple Node and each channel as a Port: in this case each
+channel would keep an interface with the control system and all its callback would be executed
+on separate threads (one per channel).
+
+
+
+
+@example ../examples/nodesTest/DeviceTimestamping.cpp
+
+Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
+
+The Makefile for the sample is the following:
+@include "../examples/nodesTest/Makefile"
+
+
+The macro NDS_DEFINE_DRIVER tells that the DeviceTimestamping class is the one that must be allocated and
+initialized when the control system wants to use our "DeviceTimestamping" device.
+
+The constructor creates a root node for the device and names it using the parameter
+<b>device</b> passed by the control system. It is not mandatory to call the root node using the <b>device</b>
+parameter.
+
+The root node is declared as a Port: this means that it holds an interface with the control system.\n
+We could have declared the root node as a simple Node and each channel as a Port: in this case each
+channel would keep an interface with the control system and all its callback would be executed
+on separate threads (one per channel).
+
+
+@example ../examples/nodesTest/DeviceTiming.cpp
+
+Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
+
+The Makefile for the sample is the following:
+@include "../examples/nodesTest/Makefile"
+
+
+The macro NDS_DEFINE_DRIVER tells that the DeviceTiming class is the one that must be allocated and
+initialized when the control system wants to use our "DeviceTiming" device.
+
+The constructor creates a root node for the device and names it using the parameter
+<b>device</b> passed by the control system. It is not mandatory to call the root node using the <b>device</b>
+parameter.
+
+The root node is declared as a Port: this means that it holds an interface with the control system.\n
+We could have declared the root node as a simple Node and each channel as a Port: in this case each
+channel would keep an interface with the control system and all its callback would be executed
+on separate threads (one per channel).
+
+
+
+@example ../examples/nodesTest/DeviceVectorDBL.cpp
+
+Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
+
+The Makefile for the sample is the following:
+@include "../examples/nodesTest/Makefile"
+
+
+The macro NDS_DEFINE_DRIVER tells that the DeviceVectorDBL	 class is the one that must be allocated and
+initialized when the control system wants to use our "DeviceVectorDBL" device.
+
+The constructor creates a root node for the device and names it using the parameter
+<b>device</b> passed by the control system. It is not mandatory to call the root node using the <b>device</b>
+parameter.
+
+The root node is declared as a Port: this means that it holds an interface with the control system.\n
+We could have declared the root node as a simple Node and each channel as a Port: in this case each
+channel would keep an interface with the control system and all its callback would be executed
+on separate threads (one per channel).
+
+
+@example ../examples/nodesTest/DeviceVectorI32.cpp
+
+Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
+
+The Makefile for the sample is the following:
+@include "../examples/nodesTest/Makefile"
+
+
+The macro NDS_DEFINE_DRIVER tells that the DeviceVectorI32 class is the one that must be allocated and
+initialized when the control system wants to use our "DeviceVectorI32" device.
+
+The constructor creates a root node for the device and names it using the parameter
+<b>device</b> passed by the control system. It is not mandatory to call the root node using the <b>device</b>
+parameter.
+
+The root node is declared as a Port: this means that it holds an interface with the control system.\n
+We could have declared the root node as a simple Node and each channel as a Port: in this case each
+channel would keep an interface with the control system and all its callback would be executed
+on separate threads (one per channel).
+
+
+
+
+@example ../examples/nodesTest/DeviceVectorI64.cpp
+
+Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
+
+The Makefile for the sample is the following:
+@include "../examples/nodesTest/Makefile"
+
+
+The macro NDS_DEFINE_DRIVER tells that the DeviceVectorI64 class is the one that must be allocated and
+initialized when the control system wants to use our "DeviceVectorI64" device.
+
+The constructor creates a root node for the device and names it using the parameter
+<b>device</b> passed by the control system. It is not mandatory to call the root node using the <b>device</b>
+parameter.
+
+The root node is declared as a Port: this means that it holds an interface with the control system.\n
+We could have declared the root node as a simple Node and each channel as a Port: in this case each
+channel would keep an interface with the control system and all its callback would be executed
+on separate threads (one per channel).
+
+
+
+@example ../examples/nodesTest/DeviceVectorI8.cpp
+
+Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
+
+The Makefile for the sample is the following:
+@include "../examples/nodesTest/Makefile"
+
+
+The macro NDS_DEFINE_DRIVER tells that the DeviceVectorI8 class is the one that must be allocated and
+initialized when the control system wants to use our "DeviceVectorI8" device.
+
+The constructor creates a root node for the device and names it using the parameter
+<b>device</b> passed by the control system. It is not mandatory to call the root node using the <b>device</b>
+parameter.
+
+The root node is declared as a Port: this means that it holds an interface with the control system.\n
+We could have declared the root node as a simple Node and each channel as a Port: in this case each
+channel would keep an interface with the control system and all its callback would be executed
+on separate threads (one per channel).
+
+
+
+@example ../examples/nodesTest/DeviceVectorUI8.cpp
+
+Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
+
+The Makefile for the sample is the following:
+@include "../examples/nodesTest/Makefile"
+
+
+The macro NDS_DEFINE_DRIVER tells that the DeviceVectorUI8 class is the one that must be allocated and
+initialized when the control system wants to use our "DeviceVectorUI8" device.
+
+The constructor creates a root node for the device and names it using the parameter
+<b>device</b> passed by the control system. It is not mandatory to call the root node using the <b>device</b>
+parameter.
+
+The root node is declared as a Port: this means that it holds an interface with the control system.\n
+We could have declared the root node as a simple Node and each channel as a Port: in this case each
+channel would keep an interface with the control system and all its callback would be executed
+on separate threads (one per channel).
+
 
 */
 

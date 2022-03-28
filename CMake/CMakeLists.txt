@@ -24,6 +24,15 @@ add_definitions(-DNDS3_DLL_EXPORTS)
 # Specify include and source files
 #---------------------------------
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include)
+if (WIN32)
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../dlfcn-win32/src)
+  if (CMAKE_C_COMPILER MATCHES "i686-w64-mingw32-gcc")
+    find_package(dlfcn-win32 REQUIRED PATHS "../dlfcn-win32/ci-build-shared-i686-w64-mingw32" CMAKE_FIND_ROOT_PATH NO_DEFAULT_PATH)
+  elseif (CMAKE_C_COMPILER MATCHES "x86_64-w64-mingw32-gcc")
+    find_package(dlfcn-win32 REQUIRED PATHS "../dlfcn-win32/ci-build-shared-x86_64-w64-mingw32" CMAKE_FIND_ROOT_PATH NO_DEFAULT_PATH)
+  endif()
+  set(CMAKE_DL_LIBS dlfcn-win32::dl)
+endif()
 
 file(
   GLOB
@@ -47,7 +56,7 @@ add_library(nds3 SHARED  ${nds_sources})
 
 # Add dependencies to the nds3 library
 #-------------------------------------
-target_link_libraries(nds3 rt dl pthread)
+target_link_libraries(nds3 ${CMAKE_DL_LIBS} pthread)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_link_libraries(nds3 gcov)
 endif()
@@ -82,35 +91,37 @@ execute_process(
   ERROR_QUIET
 )
 
-# Install into correct lib directory for rhel and debian based dists.
-if(CMAKE_INSTALL_PREFIX STREQUAL "/usr/local")
-  set(LIBDEST "lib")
-else()
-  if(DEB_HOST_MULTIARCH STREQUAL "x86_64-linux-gnu\n")
-    set(LIBDEST "lib/x86_64-linux-gnu")
+if (NOT WIN32)
+  # Install into correct lib directory for rhel and debian based dists.
+  if(CMAKE_INSTALL_PREFIX STREQUAL "/usr/local")
+    set(LIBDEST "lib")
   else()
-    set(LIBDEST "lib64")
+    if(DEB_HOST_MULTIARCH STREQUAL "x86_64-linux-gnu\n")
+      set(LIBDEST "lib/x86_64-linux-gnu")
+    else()
+      set(LIBDEST "lib64")
+    endif()
   endif()
-endif()
 
-install(
-  TARGETS nds3
-  PERMISSIONS
-    OWNER_READ OWNER_WRITE OWNER_EXECUTE
-    GROUP_READ GROUP_EXECUTE
-    WORLD_READ WORLD_EXECUTE
-  LIBRARY DESTINATION "${LIBDEST}"
-  COMPONENT "Shared library"
-)
-install(
-  FILES ${nds_include_interface}
-  DESTINATION include/nds3
-  COMPONENT "Included files"
-)
-install(
-  FILES ${nds_include_implementation}
-  DESTINATION include/nds3/impl
-  COMPONENT "Included files for control system developers"
-)
+  install(
+    TARGETS nds3
+    PERMISSIONS
+      OWNER_READ OWNER_WRITE OWNER_EXECUTE
+      GROUP_READ GROUP_EXECUTE
+      WORLD_READ WORLD_EXECUTE
+    LIBRARY DESTINATION "${LIBDEST}"
+    COMPONENT "Shared library"
+  )
+  install(
+    FILES ${nds_include_interface}
+    DESTINATION include/nds3
+    COMPONENT "Included files"
+  )
+  install(
+    FILES ${nds_include_implementation}
+    DESTINATION include/nds3/impl
+    COMPONENT "Included files for control system developers"
+  )
+endif()
 
 include(CPack)

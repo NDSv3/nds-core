@@ -18,6 +18,7 @@
  *
  */
 
+#include "nds3/HQMonitor.h"
 #include "nds3/definitions.h"
 #include "nds3/exceptions.h"
 #include "nds3/base.h"
@@ -32,10 +33,20 @@
 #include "nds3/pvVariableIn.h"
 #include "nds3/pvVariableOut.h"
 #include "nds3/dataAcquisition.h"
+#include "nds3/waveformGeneration.h"
+#include "nds3/digitalIO.h"
+#include "nds3/firmware.h"
+#include "nds3/timing.h"
+#include "nds3/timestamping.h"
 #include "nds3/factory.h"
 #include "nds3/stateMachine.h"
 #include "nds3/thread.h"
 #include "nds3/registerDevice.h"
+#include "nds3/FTE.h"
+#include "nds3/triggerAndClk.h"
+#include "nds3/routing.h"
+#include "nds3/dataMultiplexing.h"
+
 
 
 #endif // NDS3_H

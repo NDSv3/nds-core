@@ -14,6 +14,10 @@
 #include "nds3/impl/factoryBaseImpl.h"
 #include "nds3/impl/logStreamGetterImpl.h"
 #include "nds3/impl/threadBaseImpl.h"
+#ifdef _WIN32
+// For clock_gettime
+#include "nds3/timing.h"
+#endif
 
 namespace nds
 {
@@ -216,7 +220,7 @@ void BaseImpl::defineCommand(const std::string& command, const std::string& usag
     m_commands.emplace_back(command, usage, numParameters, function);
 }
 
-parameters_t BaseImpl::commandSetLogLevel(const logLevel_t logLevel, const parameters_t &)
+parameters_t BaseImpl::commandSetLogLevel(const logLevel_t logLevel, const parameters_t & /*parameters*/)
 {
     setLogLevel(logLevel);
     return parameters_t();

@@ -6,7 +6,7 @@
 class Thermometer
 {
 private:
-	nds::PVDelegateIn<double> m_thermometerPiniPV;
+    nds::PVDelegateIn<double> m_thermometerPiniPV;
 
 public:
 
@@ -15,7 +15,7 @@ public:
     Thermometer(nds::Factory &factory,
                 const std::string &deviceName,
                 const nds::namedParameters_t &parameters) :
-	m_thermometerPiniPV(nds::PVDelegateIn<double>("TemperaturePINI", std::bind(&Thermometer::getTempRandom, 
+    m_thermometerPiniPV(nds::PVDelegateIn<double>("TemperaturePINI", std::bind(&Thermometer::getTempRandom, 
                                                                              this, 
                                                                              std::placeholders::_1, 
                                                                              std::placeholders::_2)))
@@ -26,8 +26,8 @@ public:
                                                                              std::placeholders::_1, 
                                                                              std::placeholders::_2)));
 
-	m_thermometerPiniPV.processAtInit(1);
-	rootNode.addChild(m_thermometerPiniPV);
+    m_thermometerPiniPV.processAtInit(1);
+    rootNode.addChild(m_thermometerPiniPV);
 
         rootNode.initialize(this, factory);
     }
@@ -35,13 +35,13 @@ public:
     void getTemperature(timespec* pTimestamp, double* pValue)
     {
         *pValue = 10; // It is always cold in here
-	std::cout << "Temperature #1: " << *pValue << std::endl;
+    std::cout << "Temperature #1: " << *pValue << std::endl;
     }
 
     void getTempRandom(timespec* pTimestamp, double* pValue)
     {
         *pValue = 35; // It is always hot right there
-	std::cout << "Temperature #2 (pini): " << *pValue << std::endl;
+    std::cout << "Temperature #2 (pini): " << *pValue << std::endl;
     }
 };
 

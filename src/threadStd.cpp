@@ -9,6 +9,10 @@
 
 #include <thread>
 
+#ifdef _MSC_VER
+#include <pthread.h>
+#endif
+
 #include "nds3/impl/threadStd.h"
 
 namespace nds
@@ -17,7 +21,15 @@ namespace nds
 ThreadStd::ThreadStd(FactoryBaseImpl* pFactory, const std::string &name, threadFunction_t function):
     ThreadBaseImpl(pFactory, name), m_thread(function)
 {
+#ifdef _MSC_VER
+    pthread_t thread;
+    thread.p = m_thread.native_handle();
+    thread.x = 0;
+    pthread_setname_np(thread, name.c_str());
+#else
     pthread_setname_np(m_thread.native_handle(), name.c_str());
+#endif
+
 }
 
 void ThreadStd::join()

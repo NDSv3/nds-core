@@ -23,5 +23,7 @@ Port::Port(const std::string &name, const nodeType_t nodeType):
     Node(std::shared_ptr<NodeImpl>(new PortImpl(name, nodeType)))
 {
 }
-
+void Port::registerReporter(reporter_t reporter){
+  m_pImplementation->getPort()->registerReporter(reporter);
+}
 }

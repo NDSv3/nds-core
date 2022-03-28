@@ -3,6 +3,7 @@
 #include "testDevice.h"
 #include "ndsTestInterface.h"
 #include "ndsTestFactory.h"
+#include "testUtils.h"
 
 TEST(testTime, testDelegate)
 {

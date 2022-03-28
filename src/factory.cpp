@@ -36,6 +36,10 @@ void Factory::registerControlSystem(Factory &factory)
     NdsFactoryImpl::getInstance().registerControlSystem(factory.m_pFactory);
 }
 
+void Factory::registerDBParser(dbParser_t dbParserFunc){
+    m_pFactory->registerDBParser(dbParserFunc);
+}
+
 void Factory::run(int argc,char *argv[])
 {
     m_pFactory->run(argc, argv);

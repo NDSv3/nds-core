@@ -83,9 +83,10 @@ public:
      *
      * @param timestamp    the new value's timestamp
      * @param value        the value to push to the control system
+     * @param status       the status to be shown in the control system (if it is supported)
      */
     template<typename T>
-    void push(const timespec& timestamp, const T& value);
+    void push(const timespec& timestamp, const T& value, const statusPV_t& status = statusPV_t::success);
 
     /**
      * @ingroup datareadwrite

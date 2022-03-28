@@ -94,6 +94,10 @@ public:
      */
     static void registerControlSystem(Factory& factory);
 
+
+
+    void registerDBParser(dbParser_t dbParserFunc);
+
     /**
      * @brief Launches a loop that communicate with the control system.
      *

@@ -8,7 +8,7 @@ namespace nds
  * @brief This is a class intended to be used as a static class for automatic registering of device supports
  */
 template <class T>
-class NDS3_API RegisterDevice
+class NDS3_HELPER_DLL_EXPORT RegisterDevice
 {
 private:
     const std::string m_driverName;
@@ -26,8 +26,8 @@ public:
         delete (T *)device;
     }
 
-    const char *getDriverName() {
-        return m_driverName;
+    const char *getDriverName() const {
+        return m_driverName.c_str();
     }
 
 protected:

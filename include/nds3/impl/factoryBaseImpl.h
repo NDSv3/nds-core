@@ -176,6 +176,9 @@ public:
      */
     virtual void deregisterCommand(const BaseImpl& node) = 0;
 
+
+    virtual void registerDBParser(dbParser_t dbParserFunc); //TODO make abstract?
+
 private:
     struct allocatedDevice_t
     {

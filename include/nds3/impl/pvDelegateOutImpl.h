@@ -22,10 +22,18 @@ namespace nds
  * @tparam T  the PV data type.
  *            The following data types are supported:
  *            - std::int32_t
- *            - std::double
- *            - std::vector<std::int8_t>
+ *            - std::int64_t
+ *            - float
+ *            - double
+ *            - std::vector<bool>
  *            - std::vector<std::uint8_t>
+ *            - std::vector<std::uint16_t>
+ *            - std::vector<std::uint32_t>
+ *            - std::vector<std::int8_t>
+ *            - std::vector<std::int16_t>
  *            - std::vector<std::int32_t>
+ *            - std::vector<std::int64_t>
+ *            - std::vector<float>
  *            - std::vector<double>
  *            - std::string
  */
@@ -43,12 +51,16 @@ public:
      */
     typedef std::function<void (const timespec&, const T&)> write_t;
 
+    typedef std::function<void (const timespec&, const T&, const std::string&)> write_name_t;
+
     /**
      * @brief Constructor. Specifies the methods used for read/write
      *
      * @param name          PV's name
-     * @param readFunction  read method
      * @param writeFunction write method
+     * @param pvType
+     * @param initValueFunction
+     *
      */
     PVDelegateOutImpl(const std::string& name, write_t writeFunction, initValue_t initValueFunction, const outputPvType_t pvType = outputPvType_t::generic);
 
@@ -59,8 +71,12 @@ public:
      *
      * @param name          the PV's name
      * @param writeFunction write method
+     * @param pvType
+     *
      */
     PVDelegateOutImpl(const std::string& name, write_t writeFunction, const outputPvType_t pvType = outputPvType_t::generic);
+
+    PVDelegateOutImpl(const std::string& name, write_t writeFunction, write_name_t writeFunctionName, const outputPvType_t pvType = outputPvType_t::generic);
 
     /**
      * @brief Called when the control system wants to read the value.
@@ -91,6 +107,7 @@ public:
 
 
 private:
+    write_name_t m_writer_name;
     write_t m_writer;          ///< Method used to write the value
     initValue_t m_initializer; ///< Method used to read the initial value
 

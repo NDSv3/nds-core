@@ -41,10 +41,18 @@ namespace nds
  * @tparam T  the PV data type.
  *            The following data types are supported:
  *            - std::int32_t
- *            - std::double
- *            - std::vector<std::int8_t>
+ *            - std::int64_t
+ *            - float
+ *            - double
+ *            - std::vector<bool>
  *            - std::vector<std::uint8_t>
+ *            - std::vector<std::uint16_t>
+ *            - std::vector<std::uint32_t>
+ *            - std::vector<std::int8_t>
+ *            - std::vector<std::int16_t>
  *            - std::vector<std::int32_t>
+ *            - std::vector<std::int64_t>
+ *            - std::vector<float>
  *            - std::vector<double>
  *            - std::string
  *
@@ -72,6 +80,9 @@ public:
      */
     typedef std::function<void (const timespec&, const T&)> write_t;
 
+    typedef std::function<void (const timespec&, const T&, const std::string&)> write_name_t;
+
+
     /**
      * @brief Construct the PVDelegateOut object and specifies the external functions
      *        that must be called to write the data and to retrieve the initial value.
@@ -93,6 +104,8 @@ public:
      * @param writeFunction function to be used to write the value
      */
     PVDelegateOut(const std::string& name, write_t writeFunction);
+
+    PVDelegateOut(const std::string& name, write_t writeFunction, write_name_t writeFunctionName);
 
 #ifndef SWIG
 private:

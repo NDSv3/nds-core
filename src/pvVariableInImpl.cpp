@@ -56,12 +56,20 @@ void PVVariableInImpl<T>::setValue(const timespec& timestamp, const T& value)
 
     // Push the value to the outputs
     ////////////////////////////////
-    std::lock_guard<std::mutex> lock(m_lockSubscribersList);
+    std::lock_guard<nds::recursive_mutex_counter> lock(m_lockSubscribersList);
     for(subscribersList_t::iterator scanOutputs(m_subscriberOutputPVs.begin()), endOutputs(m_subscriberOutputPVs.end());
         scanOutputs != endOutputs;
         ++scanOutputs)
     {
         (*scanOutputs)->write(timestamp, value);
+    }
+
+    //If this function was the first to lock the recursive mutex, carry out unsubscription.
+    if(m_lockSubscribersList.get_count()==1){
+        while(!m_unsubscribeOutputPVs.empty()){
+            m_subscriberOutputPVs.erase(m_unsubscribeOutputPVs.front());
+            m_unsubscribeOutputPVs.pop();
+        }
     }
 }
 
@@ -91,11 +99,23 @@ dataType_t PVVariableInImpl<T>::getDataType() const
 // Instantiate all the needed data types
 ////////////////////////////////////////
 template class PVVariableInImpl<std::int32_t>;
+template class PVVariableInImpl<std::int64_t>;
+template class PVVariableInImpl<float>;
 template class PVVariableInImpl<double>;
-template class PVVariableInImpl<std::vector<std::int8_t> >;
+template class PVVariableInImpl<std::vector<bool> >;
 template class PVVariableInImpl<std::vector<std::uint8_t> >;
+template class PVVariableInImpl<std::vector<std::uint16_t> >;
+template class PVVariableInImpl<std::vector<std::uint32_t> >;
+template class PVVariableInImpl<std::vector<std::int8_t> >;
+template class PVVariableInImpl<std::vector<std::int16_t> >;
 template class PVVariableInImpl<std::vector<std::int32_t> >;
+template class PVVariableInImpl<std::vector<std::int64_t> >;
+template class PVVariableInImpl<std::vector<float> >;
 template class PVVariableInImpl<std::vector<double> >;
 template class PVVariableInImpl<std::string>;
+template class PVVariableInImpl<timespec>;
+template class PVVariableInImpl<std::vector<timespec>>;
+template class PVVariableInImpl<timestamp_t>;
+
 
 }
