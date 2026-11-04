@@ -120,8 +120,7 @@ TEST(testPVs, testVariable)
 
 	//Testing write/read of PVVariableOut: /rootNode-vectorI8_VariableOut
 	pInterface->readCSValue("/rootNode-vectorI8_VariableOut", &readTimestamp, &vector_I8);
-	EXPECT_EQ(0, vector_I8[0]);
-	EXPECT_EQ(0, vector_I8[1]);
+	EXPECT_TRUE(vector_I8.empty());
 	EXPECT_EQ(0, readTimestamp.tv_sec);
 	EXPECT_EQ(0, readTimestamp.tv_nsec);
 	timestamp.tv_sec =3; timestamp.tv_nsec=3;
@@ -135,8 +134,7 @@ TEST(testPVs, testVariable)
 
 	//Testing write/read of PVVariableOut: /rootNode-vectorUI8_VariableOut
 	pInterface->readCSValue("/rootNode-vectorUI8_VariableOut", &readTimestamp, &vector_UI8);
-	EXPECT_EQ(0, vector_UI8[0]);
-	EXPECT_EQ(0, vector_UI8[1]);
+	EXPECT_TRUE(vector_UI8.empty());
 	EXPECT_EQ(0, readTimestamp.tv_sec);
 	EXPECT_EQ(0, readTimestamp.tv_nsec);
 	timestamp.tv_sec =4; timestamp.tv_nsec=4;
@@ -150,8 +148,7 @@ TEST(testPVs, testVariable)
 
 	//Testing write/read of PVVariableOut: /rootNode-vectorI32_VariableOut
 	pInterface->readCSValue("/rootNode-vectorI32_VariableOut", &readTimestamp, &vector_I32);
-	EXPECT_EQ(0, vector_I32[0]);
-	EXPECT_EQ(0, vector_I32[1]);
+	EXPECT_TRUE(vector_I32.empty());
 	EXPECT_EQ(0, readTimestamp.tv_sec);
 	EXPECT_EQ(0, readTimestamp.tv_nsec);
 	timestamp.tv_sec =5; timestamp.tv_nsec=5;
@@ -165,8 +162,7 @@ TEST(testPVs, testVariable)
 
 	//Testing write/read of PVVariableOut: /rootNode-vectorI64_VariableOut
 	pInterface->readCSValue("/rootNode-vectorI64_VariableOut", &readTimestamp, &vector_I64);
-	EXPECT_EQ(0, vector_I64[0]);
-	EXPECT_EQ(0, vector_I64[1]);
+	EXPECT_TRUE(vector_I64.empty());
 	EXPECT_EQ(0, readTimestamp.tv_sec);
 	EXPECT_EQ(0, readTimestamp.tv_nsec);
 	timestamp.tv_sec =5; timestamp.tv_nsec=5;
@@ -180,8 +176,7 @@ TEST(testPVs, testVariable)
 
 	//Testing write/read of PVVariableOut: /rootNode-vectorDBL_VariableOut
 	pInterface->readCSValue("/rootNode-vectorDBL_VariableOut", &readTimestamp, &vector_DBL);
-	EXPECT_EQ(0, vector_DBL[0]);
-	EXPECT_EQ(0, vector_DBL[1]);
+	EXPECT_TRUE(vector_DBL.empty());
 	EXPECT_EQ(0, readTimestamp.tv_sec);
 	EXPECT_EQ(0, readTimestamp.tv_nsec);
 	timestamp.tv_sec =6; timestamp.tv_nsec=6;
