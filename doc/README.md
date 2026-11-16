@@ -12,7 +12,8 @@ This directory contains:
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | Coding style, commit conventions, PR workflow |
 | [`MAINTENANCE.md`](MAINTENANCE.md) | Versioning and maintenance policy |
 | `Doxyfile` | Doxygen configuration, generating XML into `_build/doxygen` |
-| `sphinx/` | Sphinx sources rendering the Doxygen XML via Breathe |
+| `sphinx/` | Sphinx sources rendering the Doxygen XML via Breathe (`conf.py` runs Doxygen) |
+| `sphinx/_ext/` | Sphinx extensions adapting the Doxygen XML to Breathe |
 | `api/` | Hand-written pages included in the generated API reference |
 | `images/` | Diagrams referenced by the documentation |
 

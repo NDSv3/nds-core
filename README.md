@@ -244,20 +244,23 @@ The NDSv3 project is hosted at <https://github.com/NDSv3>; this library is
 
 There is no published API reference site for the project yet. The legacy
 reference at <https://cosylab.github.io/nds3/> describes the original Cosylab
-NDS3 and predates this repository, so build the reference locally instead —
-Doxygen generates XML which Sphinx renders via Breathe:
+NDS3 and predates this repository, so build the reference locally instead.
+
+The documentation is written as Doxygen comments in the public headers and
+as Doxygen pages in `doc/api`. Doxygen turns them into XML, which Sphinx
+renders via Breathe into a web site in the Read the Docs style. `conf.py`
+runs Doxygen, so Doxygen just has to be installed:
 
 ```bash
-pip install sphinx breathe sphinx-rtd-theme
+sudo apt-get install doxygen
+pip install -r doc/sphinx/requirements.txt
 
-mkdir -p doc/_build/doxygen
-doxygen doc/Doxyfile
-
-mkdir -p doc/_build/html
 sphinx-build -b html doc/sphinx doc/_build/html
 ```
 
-The result is at `doc/_build/html/index.html`.
+The result is at `doc/_build/html/index.html`. The repository also has a
+`.readthedocs.yaml`, so the site can be published on Read the Docs by
+importing the project there.
 
 ## Continuous integration
 
