@@ -28,7 +28,7 @@ namespace nds
 {
 
 /**
- * @brief Type defined to gather the arguments required by @ref TriggerAndClkImpl constructors.
+ * @brief Type defined to gather the arguments required by the nds::TriggerAndClk constructors.
  * It can be used in auxiliary methods or additional nodes to simplify the number
  * of arguments required.
  */

@@ -68,14 +68,14 @@ This section describes all necessary steps to implement an NDS Device Driver, in
 @image latex exampleNDSCOREtree.png Tree-like structure of the example NDS Device Driver
 
 @note
-Example is available at "src/c++/examples/nds-example"
+Example is available at "examples/nds-example"
 @note
-Example's tests are available at "src/test/c++/nds-example"
+Example's tests are available at "tests/unit-example"
 
 @subsection getting_started_example_NDS_driver_header Header file
 The following points described the content of the header file needed for the implementation of an NDS Device Driver.
 
-The @ref nds-example.h file contains the basic definition of an NDS device driver. The required functions are the constructor, the destructor, the function to allocate the driver's resources, the function to de-allocate the resources, and a function to retrieve the name of the device driver. These functions must be public for the control system to access them and manage the Device Driver. 
+The `nds-example.h` file contains the basic definition of an NDS device driver. The required functions are the constructor, the destructor, the function to allocate the driver's resources, the function to de-allocate the resources, and a function to retrieve the name of the device driver. These functions must be public for the control system to access them and manage the Device Driver. 
 @code{.cpp}
 #include <nds3/nds.h>
 
@@ -187,7 +187,7 @@ However, in most cases, more functions, variables and objects need to be defined
 	@endcode
 	
 @subsection getting_started_example_NDS_driver_source Source file
-The file @ref nds-example.cpp contains the code supporting the implementation of the device driver.  We are going to review the creation of the constructor and the basic steps to get a functional driver.
+The file @ref nds-example/nds-example.cpp "nds-example.cpp" contains the code supporting the implementation of the device driver.  We are going to review the creation of the constructor and the basic steps to get a functional driver.
 -# First, the constructor has a reference to the nds::Factory, the device name and the additional parameters of this, as defined by the user. At the end of the file you have a macro with the definition of the NDS device driver name that will be use to identify it. You can have multiple instances of the same device driver (if the Linux Device Driver allows it) but not different NDS Device drivers with the same identification.
 @code{.cpp}
 #include "nds-example.h"
@@ -516,7 +516,7 @@ nds::Port rootNode(DeviceName);
 		
 @subsection getting_started_example_NDS_driver_testing Testing the Device Driver
 @note
-Test available at "src/test/nds-example"
+Test available at "tests/unit-example"
 
 @subsubsection getting_started_example_NDS_driver_testing_main main.cpp
 @code
@@ -536,7 +536,7 @@ nds::Factory::registerControlSystem(testControlSystem);   ::testing::InitGoogleT
     return RUN_ALL_TESTS();
 }
 @endcode
-The nds::Factory::registerDriver() method is registering the Device Driver in NDS with the name "Device". The parameters set are the functions implemented to allocate and deallocate the driver. Once the driver has been registered, NDS is configured to use the implementation of the control system using the nds::Factory::registerControlSystem() method. testControlSystem's class is nds::Factory (available in the nds3-testcontrolsystem library), and the public methods are available in the @ref ndsTestInterface.h header file.
+The nds::Factory::registerDriver() method is registering the Device Driver in NDS with the name "Device". The parameters set are the functions implemented to allocate and deallocate the driver. Once the driver has been registered, NDS is configured to use the implementation of the control system using the nds::Factory::registerControlSystem() method. testControlSystem's class is nds::Factory (available in the nds3-testcontrolsystem library), and the public methods are available in the `ndsTestInterface.h` header file.
 Finally, the Google test environment is initialized and the tests are run.
 
 @subsubsection getting_started_example_NDS_driver_testing_testDeviceAllocation testDeviceAllocation.cpp

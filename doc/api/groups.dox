@@ -78,6 +78,22 @@ node is exposed to the control system.
 
 
 
+@defgroup timestamp Timestamping
+
+Each node can provide timestamps for its data. By default a node asks its parent for the time,
+up to the root node, which reads the system clock. A custom time source can be installed on any
+node with Base::setTimestampDelegate(); Base::getTimestamp() returns the time from the configured
+source.
+
+
+
+@defgroup timing Timing
+
+Types and methods related to time sources, scheduled start times and timed events of the
+NDS nodes.
+
+
+
 
 
 */

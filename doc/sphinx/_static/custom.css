@@ -1,0 +1,20 @@
+/* Use the full window width for the long C++ signatures */
+.wy-nav-content {
+    max-width: 1100px;
+}
+
+/* Separate the class entries a bit more clearly */
+dl.cpp.class > dt,
+dl.cpp.struct > dt {
+    border-top: 3px solid #6ab0de;
+    background: #e7f2fa;
+    padding: 6px;
+}
+
+/* The topic pages have their own headings; hide Breathe's "group X" line */
+.nds-group > dl > dt {
+    display: none;
+}
+.nds-group > dl > dd {
+    margin-left: 0;
+}

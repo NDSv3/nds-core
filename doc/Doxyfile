@@ -1,11 +1,46 @@
+# Doxygen configuration for the NDS3 API reference.
+#
+# Doxygen only produces XML here; the web site is rendered by Sphinx/Breathe
+# (see doc/sphinx). All paths are relative to the repository root, which is
+# the working directory Doxygen has to be started from:
+#
+#     doxygen doc/Doxyfile
+#
+# doc/sphinx/conf.py runs this automatically as part of sphinx-build.
+
 PROJECT_NAME           = "NDS3"
-PROJECT_NUMBER         = "3.3.0.0"
+OUTPUT_DIRECTORY       = doc/_build/doxygen
+
 STRIP_FROM_PATH        = .
+STRIP_FROM_INC_PATH    = include
+FULL_PATH_NAMES        = YES
+
+# Public headers and hand-written pages; the pimpl classes are internal
 INPUT                  = include/nds3 doc/api
-FILE_PATTERNS          = *.h *.hpp *.cpp *.dox
+FILE_PATTERNS          = *.h *.dox
 RECURSIVE              = YES
+EXCLUDE                = include/nds3/impl
+
+EXAMPLE_PATH           = examples .
+IMAGE_PATH             = doc/images
+
+# Expand the export macros so they don't end up in the declarations
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = YES
+PREDEFINED             = NDS3_API= NDS3_DRIVER_API=
+
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = YES
+HIDE_UNDOC_RELATIONS   = YES
+
+QUIET                  = YES
+WARN_IF_UNDOCUMENTED   = NO
+WARN_LOGFILE           = doc/_build/doxygen/warnings.log
+
 GENERATE_HTML          = NO
 GENERATE_LATEX         = NO
 GENERATE_XML           = YES
 XML_OUTPUT             = xml
-OUTPUT_DIRECTORY       = doc/_build/doxygen
+XML_PROGRAMLISTING     = NO

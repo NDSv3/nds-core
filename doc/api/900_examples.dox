@@ -3,21 +3,21 @@ namespace nds
 
 /**
 
-@example ../examples/nds-example/nds-example.cpp
+@example nds-example/nds-example.cpp
 
 This is another example of how to create an NDS device driver including already defined NDS nodes.
 
-The Makefile for this sample is the following:
-@include "../examples/nds-example/Makefile"
+The CMakeLists.txt for this sample is the following:
+@include nds-example/CMakeLists.txt
 
 
 
-@example ../examples/nodesTest/DeviceDBL.cpp
+@example nodesTest/DeviceDBL.cpp
 
 Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
 
-The Makefile for the sample is the following:
-@include "../examples/nodesTest/Makefile"
+The CMakeLists.txt for the sample is the following:
+@include nodesTest/CMakeLists.txt
 
 
 The macro NDS_DEFINE_DRIVER tells that the DeviceDBL class is the one that must be allocated and
@@ -35,12 +35,12 @@ on separate threads (one per channel).
 
 
 
-@example ../examples/nodesTest/DeviceDigitalIO.cpp
+@example nodesTest/DeviceDigitalIO.cpp
 
 Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
 
-The Makefile for the sample is the following:
-@include "../examples/nodesTest/Makefile"
+The CMakeLists.txt for the sample is the following:
+@include nodesTest/CMakeLists.txt
 
 
 The macro NDS_DEFINE_DRIVER tells that the DeviceDigitalIO class is the one that must be allocated and
@@ -57,12 +57,12 @@ on separate threads (one per channel).
 
 
 
-@example ../examples/nodesTest/DeviceError.cpp
+@example nodesTest/DeviceError.cpp
 
 Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
 
-The Makefile for the sample is the following:
-@include "../examples/nodesTest/Makefile"
+The CMakeLists.txt for the sample is the following:
+@include nodesTest/CMakeLists.txt
 
 
 The macro NDS_DEFINE_DRIVER tells that the DeviceError class is the one that must be allocated and
@@ -79,12 +79,12 @@ on separate threads (one per channel).
 
 
 
-@example ../examples/nodesTest/DeviceFirmware.cpp
+@example nodesTest/DeviceFirmware.cpp
 
 Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
 
-The Makefile for the sample is the following:
-@include "../examples/nodesTest/Makefile"
+The CMakeLists.txt for the sample is the following:
+@include nodesTest/CMakeLists.txt
 
 
 The macro NDS_DEFINE_DRIVER tells that the DeviceFirmware class is the one that must be allocated and
@@ -101,12 +101,12 @@ on separate threads (one per channel).
 
 
 
-@example ../examples/nodesTest/DeviceFTE.cpp
+@example nodesTest/DeviceFTE.cpp
 
 Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
 
-The Makefile for the sample is the following:
-@include "../examples/nodesTest/Makefile"
+The CMakeLists.txt for the sample is the following:
+@include nodesTest/CMakeLists.txt
 
 
 The macro NDS_DEFINE_DRIVER tells that the DeviceFTE class is the one that must be allocated and
@@ -123,12 +123,12 @@ on separate threads (one per channel).
 
 
 
-@example ../examples/nodesTest/DeviceHQMonitor.cpp
+@example nodesTest/DeviceHQMonitor.cpp
 
 Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
 
-The Makefile for the sample is the following:
-@include "../examples/nodesTest/Makefile"
+The CMakeLists.txt for the sample is the following:
+@include nodesTest/CMakeLists.txt
 
 
 The macro NDS_DEFINE_DRIVER tells that the DeviceHQMonitor class is the one that must be allocated and
@@ -146,12 +146,12 @@ on separate threads (one per channel).
 
 
 
-@example ../examples/nodesTest/DeviceI32.cpp
+@example nodesTest/DeviceI32.cpp
 
 Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
 
-The Makefile for the sample is the following:
-@include "../examples/nodesTest/Makefile"
+The CMakeLists.txt for the sample is the following:
+@include nodesTest/CMakeLists.txt
 
 
 The macro NDS_DEFINE_DRIVER tells that the DeviceI32 class is the one that must be allocated and
@@ -169,12 +169,12 @@ on separate threads (one per channel).
 
 
 
-@example ../examples/nodesTest/DeviceI64.cpp
+@example nodesTest/DeviceI64.cpp
 
 Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
 
-The Makefile for the sample is the following:
-@include "../examples/nodesTest/Makefile"
+The CMakeLists.txt for the sample is the following:
+@include nodesTest/CMakeLists.txt
 
 
 The macro NDS_DEFINE_DRIVER tells that the DeviceI64 class is the one that must be allocated and
@@ -192,12 +192,12 @@ on separate threads (one per channel).
 
 
 
-@example ../examples/nodesTest/DeviceRouting.cpp
+@example nodesTest/DeviceRouting.cpp
 
 Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
 
-The Makefile for the sample is the following:
-@include "../examples/nodesTest/Makefile"
+The CMakeLists.txt for the sample is the following:
+@include nodesTest/CMakeLists.txt
 
 
 The macro NDS_DEFINE_DRIVER tells that the DeviceRouting class is the one that must be allocated and
@@ -214,12 +214,12 @@ on separate threads (one per channel).
 
 
 
-@example ../examples/nodesTest/DeviceStateMachine.cpp
+@example nodesTest/DeviceStateMachine.cpp
 
 Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
 
-The Makefile for the sample is the following:
-@include "../examples/nodesTest/Makefile"
+The CMakeLists.txt for the sample is the following:
+@include nodesTest/CMakeLists.txt
 
 
 The macro NDS_DEFINE_DRIVER tells that the DeviceStateMachine class is the one that must be allocated and
@@ -237,12 +237,12 @@ on separate threads (one per channel).
 
 
 
-@example ../examples/nodesTest/DeviceTimestamping.cpp
+@example nodesTest/DeviceTimestamping.cpp
 
 Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
 
-The Makefile for the sample is the following:
-@include "../examples/nodesTest/Makefile"
+The CMakeLists.txt for the sample is the following:
+@include nodesTest/CMakeLists.txt
 
 
 The macro NDS_DEFINE_DRIVER tells that the DeviceTimestamping class is the one that must be allocated and
@@ -258,12 +258,12 @@ channel would keep an interface with the control system and all its callback wou
 on separate threads (one per channel).
 
 
-@example ../examples/nodesTest/DeviceTiming.cpp
+@example nodesTest/DeviceTiming.cpp
 
 Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
 
-The Makefile for the sample is the following:
-@include "../examples/nodesTest/Makefile"
+The CMakeLists.txt for the sample is the following:
+@include nodesTest/CMakeLists.txt
 
 
 The macro NDS_DEFINE_DRIVER tells that the DeviceTiming class is the one that must be allocated and
@@ -280,12 +280,12 @@ on separate threads (one per channel).
 
 
 
-@example ../examples/nodesTest/DeviceVectorDBL.cpp
+@example nodesTest/DeviceVectorDBL.cpp
 
 Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
 
-The Makefile for the sample is the following:
-@include "../examples/nodesTest/Makefile"
+The CMakeLists.txt for the sample is the following:
+@include nodesTest/CMakeLists.txt
 
 
 The macro NDS_DEFINE_DRIVER tells that the DeviceVectorDBL	 class is the one that must be allocated and
@@ -301,12 +301,12 @@ channel would keep an interface with the control system and all its callback wou
 on separate threads (one per channel).
 
 
-@example ../examples/nodesTest/DeviceVectorI32.cpp
+@example nodesTest/DeviceVectorI32.cpp
 
 Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
 
-The Makefile for the sample is the following:
-@include "../examples/nodesTest/Makefile"
+The CMakeLists.txt for the sample is the following:
+@include nodesTest/CMakeLists.txt
 
 
 The macro NDS_DEFINE_DRIVER tells that the DeviceVectorI32 class is the one that must be allocated and
@@ -324,12 +324,12 @@ on separate threads (one per channel).
 
 
 
-@example ../examples/nodesTest/DeviceVectorI64.cpp
+@example nodesTest/DeviceVectorI64.cpp
 
 Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
 
-The Makefile for the sample is the following:
-@include "../examples/nodesTest/Makefile"
+The CMakeLists.txt for the sample is the following:
+@include nodesTest/CMakeLists.txt
 
 
 The macro NDS_DEFINE_DRIVER tells that the DeviceVectorI64 class is the one that must be allocated and
@@ -346,12 +346,12 @@ on separate threads (one per channel).
 
 
 
-@example ../examples/nodesTest/DeviceVectorI8.cpp
+@example nodesTest/DeviceVectorI8.cpp
 
 Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
 
-The Makefile for the sample is the following:
-@include "../examples/nodesTest/Makefile"
+The CMakeLists.txt for the sample is the following:
+@include nodesTest/CMakeLists.txt
 
 
 The macro NDS_DEFINE_DRIVER tells that the DeviceVectorI8 class is the one that must be allocated and
@@ -368,12 +368,12 @@ on separate threads (one per channel).
 
 
 
-@example ../examples/nodesTest/DeviceVectorUI8.cpp
+@example nodesTest/DeviceVectorUI8.cpp
 
 Folder nodesTest contains different cpp files with implementation of NDS Device Driver using the NDs nodes.
 
-The Makefile for the sample is the following:
-@include "../examples/nodesTest/Makefile"
+The CMakeLists.txt for the sample is the following:
+@include nodesTest/CMakeLists.txt
 
 
 The macro NDS_DEFINE_DRIVER tells that the DeviceVectorUI8 class is the one that must be allocated and

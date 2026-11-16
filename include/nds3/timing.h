@@ -151,7 +151,7 @@ class NDS3_API Timing: public Node  {
      *
      * @brief Push data to the control system.
      *
-     * Usually your device implementation will call th`is function from the
+     * Usually your device implementation will call this function from the
      *  data thread in order to push the data.
      *
      * @param timestamp the timestamp for the data

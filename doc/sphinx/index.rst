@@ -1,44 +1,36 @@
-NDS3 API Documentation
-======================
+Nominal Device Support v3 (NDS3)
+================================
 
-Welcome to the Nominal Device Support v3 (NDS3) documentation.
+.. doxygenpage:: index
+   :content-only:
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: User guide
 
-API Index
----------
+   getting_started
+   naming_rules
+   concepts
+   examples
 
-.. doxygenindex::
-   :project: nds3
+.. toctree::
+   :maxdepth: 2
+   :caption: API reference
 
-Groups
-------
+   api/framework
+   api/pvs
+   api/nodes
+   api/types
+   api/exceptions
 
-Logging
-~~~~~~~
-.. doxygengroup:: logging
-   :project: nds3
-   :members:
+.. toctree::
+   :maxdepth: 1
+   :caption: About
 
-Data Input/Output
-~~~~~~~~~~~~~~~~~
-.. doxygengroup:: datareadwrite
-   :project: nds3
-   :members:
+   license
 
-Naming Policies
-~~~~~~~~~~~~~~~
-.. doxygengroup:: naming
-   :project: nds3
-   :members:
+Indices
+-------
 
-API Reference
--------------
-
-.. doxygennamespace:: nds
-   :project: nds3
-   :members:
-   :protected-members:
-   :undoc-members:
+* :ref:`genindex`
+* :ref:`search`
